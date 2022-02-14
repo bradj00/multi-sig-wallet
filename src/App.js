@@ -3,6 +3,19 @@ import './App.css';
 import ContractWalletBalance from './components/ContractWalletBalance';
 import LeftPanel from './components/LeftPanel';
 import Header from './components/Header';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
+
+import Proposals from "./components/Proposals";
+import Custodians from './components/Custodians';
+import History from './components/History';
+import Deposits from './components/Depsoits';
+
 
 const Styles={
   container: {
@@ -33,11 +46,20 @@ const Styles={
   contractBalance:{
 
   },
+  content:{
+    position:'absolute',
+    top:'6%',
+    right:'0.5%',
+    border: '1px solid #00ff00',
+    width: '79%',
+    height:'93%',
+
+  }
 }
 
 function App() {
   return (
-    
+    <Router>
     <div className="App" style={Styles.container}>
       <div style={Styles.header}>
         <Header />
@@ -45,8 +67,18 @@ function App() {
       <div style={Styles.leftNavBar}>
         <LeftPanel />
       </div>
+      <div style={Styles.content}>
+        <Routes>
+            <Route exact path="/" element={<Proposals/>} />
 
+            <Route path='/Proposals'  element={<Proposals/>}/>
+            <Route path='/Custodians' element={<Custodians/>} />
+            <Route path='/History' element={<History/>} />
+            <Route path='/Deposits' element={<Deposits/>} />
+        </Routes>
+      </div>
     </div>
+    </Router>
   );
 }
 

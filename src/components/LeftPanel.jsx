@@ -13,7 +13,7 @@ import '../styles/styles.css'
 
 const LeftPanel = () => {
   return (
-    <Router>
+
     <div className="menu">
     <ul>
         <li> <Link to="/Proposals">Proposals</Link> </li>
@@ -21,7 +21,7 @@ const LeftPanel = () => {
         <li> <Link to="/History">History</Link> </li>
     </ul>
     </div>
-  </Router>
+
   )
 }
 
