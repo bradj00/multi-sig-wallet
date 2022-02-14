@@ -1,0 +1,22 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+
+  }
+  
+  .menu ul {
+    
+    margin: 0;
+    
+  }
+  
+  .menu li {
+    margin-top: 20px;
+    background-color: #555;
+    font-family: sans-serif;
+    font-size: 2em;
+    line-height: 40px;
+    height: 40px;
+    border-bottom: 5px solid #888;
+    
+  }

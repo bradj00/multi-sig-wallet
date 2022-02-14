@@ -4,7 +4,6 @@ import ContractWalletBalance from './components/ContractWalletBalance';
 import LeftPanel from './components/LeftPanel';
 import Header from './components/Header';
 
-
 const Styles={
   container: {
     color:'#fff',
@@ -38,6 +37,7 @@ const Styles={
 
 function App() {
   return (
+    
     <div className="App" style={Styles.container}>
       <div style={Styles.header}>
         <Header />
