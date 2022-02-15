@@ -1,11 +1,13 @@
 import React from 'react'
+import Account from './Account'
 import ContractWalletBalance from './ContractWalletBalance'
 
 const Header = () => {
+
   return (
     <div style={{display:'flex', justifyContent:'space-between', margin:'10px', width:'100%'}}>
         <div>
-            Signed in as: <strong>0x123...aBcD</strong>
+            <Account />
         </div>
         <div>
             <ContractWalletBalance />

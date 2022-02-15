@@ -4,10 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { MoralisProvider } from "react-moralis";
+
+
 ReactDOM.render(
+
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+
+    <MoralisProvider appId="oqX392ItkCg8scJyhUu3DCSKC30PxaLMFHQGyhsH" serverUrl="https://4gwcornnuf54.usemoralis.com:2053/server">
+      <App />
+    </MoralisProvider>
+
+</React.StrictMode>,
   document.getElementById('root')
 );
 
@@ -15,3 +23,4 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+

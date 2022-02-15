@@ -3,6 +3,7 @@ import './App.css';
 import ContractWalletBalance from './components/ContractWalletBalance';
 import LeftPanel from './components/LeftPanel';
 import Header from './components/Header';
+import { useMoralis } from "react-moralis";
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -47,17 +48,21 @@ const Styles={
 
   },
   content:{
+    marginTop:'1%',
     position:'absolute',
     top:'6%',
     right:'0.5%',
-    border: '1px solid #00ff00',
+    border: '0px solid #00ff00',
     width: '79%',
-    height:'93%',
+    height:'92%',
+
 
   }
 }
 
 function App() {
+ 
+  
   return (
     <Router>
     <div className="App" style={Styles.container}>
