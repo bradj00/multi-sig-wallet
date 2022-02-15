@@ -5,8 +5,11 @@ import { getEllipsisTxt } from "../helpers/formatters";
 
 const Account = () => {
     
-    const { authenticate, isAuthenticated, user } = useMoralis();
+    const { authenticate, logout, isAuthenticated, user } = useMoralis();
     const [address, setAddress] = useState();
+
+
+
     useEffect(() => {
         if (isAuthenticated) {
           setAddress(user.attributes.ethAddress);
@@ -23,7 +26,8 @@ const Account = () => {
 
     return (
         <div>
-          Welcome <strong>{getEllipsisTxt(address, 5)}</strong>
+          Welcome <span style={{fontSize:'20px', color:'#00f8a2', marginRight:'20px'}}>{getEllipsisTxt(address, 5)}</span>
+          <button onClick={() => logout()}>Sign Out</button>
         </div>
       );
 }
