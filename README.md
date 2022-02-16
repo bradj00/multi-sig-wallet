@@ -4,14 +4,14 @@ This is my first take on a multi-sig Ethereum wallet, built from the ground up u
 
 
 
-###### SETUP
+##### SETUP
 Adjust Custodian accounts in `MultiSig.sol`
 
 
-###### DEPLOY
+##### DEPLOY
 Deploy contract to your favorite EVM chain (Ethereum, Polygon, etc.)
 
-###### USE
+##### USE
 * Raise a new proposal
 * View Custodian accounts for the contract
 * View Historic Proposal outcomes
