@@ -1,18 +1,22 @@
 import React, { useEffect, } from 'react'
-import { useMoralis, useWeb3ExecuteFunction } from 'react-moralis';
-import { contractABI, contractAddress } from '../contractVars/bankABI.jsx';
+import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract } from 'react-moralis';
+import { contractABI, contractAddress } from '../contractVars/bankABI';
 
 const ContractWalletBalance = () => {
 
 
     const { authenticate, logout, isAuthenticated, user,  } = useMoralis();
 
-    const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({
+    const { data, error, runContractFunction, isFetching, isLoading } = useWeb3Contract({
         abi: contractABI,
         contractAddress: contractAddress,
         functionName: "getContractBalance",
-  
     });
+    // const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({
+    //     abi: contractABI,
+    //     contractAddress: contractAddress,
+    //     functionName: "getContractBalance",
+    // });
 
 
     if (!isAuthenticated) {
@@ -37,15 +41,11 @@ const ContractWalletBalance = () => {
             )  
     }
     
-    return (<div>
-        
-        <button onClick={() => fetch()} disabled={isFetching}>Fetch data</button>
-        {data && <pre>
-          {JSON.stringify(data),null,2 }
-          {console.log(data)}
-        </pre>
-        }
-      </div>)
+    return(
+        <div>
+         $BALANCE
+        </div>
+      );
 }
 
 export default ContractWalletBalance

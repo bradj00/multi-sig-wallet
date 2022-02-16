@@ -3,8 +3,8 @@ import './App.css';
 import ContractWalletBalance from './components/ContractWalletBalance';
 import LeftPanel from './components/LeftPanel';
 import Header from './components/Header';
-import { useMoralis } from "react-moralis";
-import React from 'react';
+import { enableWeb3, isWeb3Enabled, useMoralis } from "react-moralis";
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +16,9 @@ import Proposals from "./components/Proposals";
 import Custodians from './components/Custodians';
 import History from './components/History';
 import Deposits from './components/Depsoits';
+
+
+
 
 
 const Styles={
@@ -61,9 +64,18 @@ const Styles={
 }
 
 function App() {
- 
+  const { web3, enableWeb3, isWeb3Enabled, isWeb3EnableLoading, web3EnableError } = useMoralis();
+  
+  //THE MAGIC SAUCE TO ENABLE WEB3
+  useEffect(() => {
+    if (!isWeb3Enabled) {
+      console.log('enabling web3...');
+      enableWeb3();
+    }
+    }, [web3]);
   
   return (
+ 
     <Router>
     <div className="App" style={Styles.container}>
       <div style={Styles.header}>
@@ -84,6 +96,7 @@ function App() {
       </div>
     </div>
     </Router>
+
   );
 }
 
