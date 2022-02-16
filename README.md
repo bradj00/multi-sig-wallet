@@ -1,5 +1,19 @@
-# Getting used to working from a repository!
+# Homebrew Multi-Sig Ethereum Wallet
 
-Here is some readme text. I am creating a multisig wallet and migrating my code to github.
+This is my first take on a multi-sig Ethereum wallet, built from the ground up using Moralis + Web3 + React.
 
-This is a private repository so I think only I can see it? Learning!
+
+
+#SETUP
+Adjust Custodian accounts in `MultiSig.sol`
+
+
+#DEPLOY
+Deploy contract to your favorite EVM chain (Ethereum, Polygon, etc.)
+
+#USE
+* Raise a new proposal
+* View Custodian accounts for the contract
+* View Historic Proposal outcomes
+* Address Book with ENS support (coming soon) -- USE THIS WITH GREAT CAUTION AND ALWAYS DOUBLE-CHECK ALL ADDRESSES BEFORE SENDING!!
+* 
