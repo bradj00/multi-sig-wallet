@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer } from 'react-moralis';
+import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 
 const Styles= {
@@ -27,6 +27,24 @@ const Styles= {
 
 const Proposals = () => {
 
+  const [updatedProposals, setUpdatedProposals] = useState([]);
+
+  useMoralisSubscription("MultiSigAlertNewApprovalC", q => q, [], {
+    onUpdate: data => updateProposalTable(data),
+  });
+
+  function updateProposalTable(data){
+    console.log('adding new proposal:');
+    console.log(data);
+    console.log(Object.keys(data));
+    console.log(data.attributes);
+    console.log(data.attributes.amountGuy);
+    let newProposalsArr = [...updatedProposals];
+    newProposalsArr.reverse();
+    newProposalsArr.push(data);
+    newProposalsArr.reverse();
+    setUpdatedProposals(newProposalsArr);
+  }
 
   const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({
     chain:'mumbai',
@@ -38,7 +56,7 @@ const Proposals = () => {
 
 
   if (data && !isLoading && !isFetching){
-    console.log('asdlfkjdsflksjdfsldkfjsdlk');
+
     return(
     <div style={Styles.container}>
         <div style={{position:'absolute', fontSize:'35px', width:'100%'}}>
@@ -56,9 +74,20 @@ const Proposals = () => {
             <th style={Styles.th}>Approvals </th>
           </tr>
          { 
-          
-          data.map((obj, index) => (
-            <>
+          updatedProposals.map((obj2, index) => (
+            <tr key={index}>
+              <td style={Styles.td}> idNum </td>
+              <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
+              <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
+              <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
+              <td style={Styles.td}> 0 / 3 </td>
+            </tr>
+          ))
+          }
+
+          {
+          data.slice(0).reverse().map((obj, index) => (
+            
             <tr key={index}>
               <td style={Styles.td}>{ parseInt(obj[1]._hex, 16) }</td>
               <td style={Styles.td}>{ obj[0] }</td>
@@ -66,7 +95,7 @@ const Proposals = () => {
               <td style={Styles.td}>{ parseInt(obj[2]._hex, 16) }</td>
               <td style={Styles.td}> 0 / 3 </td>
             </tr>
-            </>
+            
           ))
           
          }
