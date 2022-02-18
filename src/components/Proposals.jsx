@@ -65,7 +65,7 @@ const Proposals = () => {
 
   const [updatedProposals, setUpdatedProposals] = useState([]);
 
-  useMoralisSubscription("MultiSigAlertNewApprovalG", q => q, [], {
+  useMoralisSubscription("MultiSigAlertNewApprovalJ", q => q, [], {
     onUpdate: data => updateProposalTable(data),
   });
 
@@ -136,7 +136,7 @@ const Proposals = () => {
          { 
           updatedProposals.map((obj2, index) => (
             <tr key={index}>
-              <td style={Styles.td}> idNum </td>
+              <td style={Styles.td}>{obj2.attributes.idGuy  } </td>
               <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
               <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
               <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
