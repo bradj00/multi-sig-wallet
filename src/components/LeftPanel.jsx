@@ -22,6 +22,7 @@ const LeftPanel = () => {
           <li> <Link to="/Proposals">Proposals</Link> </li>
           <li> <Link to="/Custodians">Custodians</Link> </li>
           <li> <Link to="/History">History</Link> </li>
+          <li> <Link to="/Treasury">Treasury</Link> </li>
       </ul>
       </div>
       

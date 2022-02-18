@@ -17,6 +17,7 @@ import Custodians from './components/Custodians';
 import History from './components/History';
 import Deposits from './components/Depsoits';
 import Admin from './components/Admin';
+import Treasury from './components/Treasury';
 
 
 
@@ -93,6 +94,7 @@ function App() {
             <Route path='/History' element={<History/>} />
             <Route path='/Deposits' element={<Deposits/>} />
             <Route path='/Admin' element={<Admin/>} />
+            <Route path='/Treasury' element={<Treasury/>} />
         </Routes>
       </div>
     </div>

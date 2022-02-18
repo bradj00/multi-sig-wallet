@@ -19,13 +19,14 @@ const Styles = {
 
 }
 
-const History = () => {
+const Treasury = () => {
   return (
     <div>
-      <div style={{position:'absolute', fontSize:'35px', width:'100%'}}>
-        Historic Actions
-        </div>
-      <div style={{position:'absolute', left:'3%', width:'95%'}}>
+        Treasury should only show for custodians.
+
+        This will be gated at the contract level.
+
+        <div style={{position:'absolute', left:'3%', width:'95%'}}>
         <table style={Styles.table}>
           <tbody>
           <tr>
@@ -37,11 +38,10 @@ const History = () => {
 
           </tbody>
         </table>
-      </div>
+        </div>
 
-
-    </div>
+    </div> 
   )
 }
 
-export default History
+export default Treasury

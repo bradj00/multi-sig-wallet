@@ -2,7 +2,7 @@ import React, { useEffect, useState, Component } from 'react'
 import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 
-const Styles= {
+const Styles= { 
   container: {
     display:'flex',
     justifyContent:'center',
@@ -82,7 +82,7 @@ useEffect(()=>{
     return(
     <div style={Styles.container}>
         <div style={{position:'absolute', fontSize:'35px', width:'100%'}}>
-          OPEN PROPOSALS
+          Open Proposals
         </div>
 
         <div style={{position:'absolute', left:'3%', width:'95%'}}>
