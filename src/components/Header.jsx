@@ -9,6 +9,9 @@ const Header = () => {
         <div>
             <Account />
         </div>
+        <div style={{position:'absolute', left:'25%'}}>
+            <u>Make a deposit</u>
+        </div>
         <div>
             <ContractWalletBalance />
         </div>

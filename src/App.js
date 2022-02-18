@@ -18,6 +18,7 @@ import History from './components/History';
 import Deposits from './components/Depsoits';
 import Admin from './components/Admin';
 import Treasury from './components/Treasury';
+import AddressBook from './components/AddressBook';
 
 
 
@@ -30,7 +31,8 @@ const Styles={
     backgroundColor:'#333',
     position:'absolute',
     display:'flex',
-    justifyContent:'center'
+    justifyContent:'center',
+    overflow:'hidden',
   },
   header: {
     display:'flex',
@@ -95,6 +97,7 @@ function App() {
             <Route path='/Deposits' element={<Deposits/>} />
             <Route path='/Admin' element={<Admin/>} />
             <Route path='/Treasury' element={<Treasury/>} />
+            <Route path='/AddressBook' element={<AddressBook/>} />
         </Routes>
       </div>
     </div>
