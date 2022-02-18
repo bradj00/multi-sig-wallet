@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Link} from "react-router-dom";
 import { useMoralis, useChain, useWeb3ExecuteFunction } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
@@ -20,6 +20,8 @@ const Styles = {
         borderRight:'1px solid black'
       },
 }
+
+
 const Admin = () => {
     const {account} = useChain();
     const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({ 
@@ -60,20 +62,28 @@ function initializeContract(){
     firstRunContract.fetch();
 }
 
-
-
+    const [hasContractBeenRun, setHasContractBeenRun] = useState(false);
+    
 
 
     if (data && !isLoading && !isFetching && CustodiansFromContract.data && !CustodiansFromContract.isLoading && !CustodiansFromContract.isFetching){
         if ( account.toUpperCase() == data.toUpperCase() ){
-            console.log('match!');
-            let thisArr = CustodiansFromContract.data;
-            console.log(thisArr);
-            return (
-                <>
-                    Admin Mode: Activated<br></br>
-                    <button style={{}} onClick={()=>{initializeContract()}}>Initialize Contract</button>
 
+            console.log('match!');
+            if ((CustodiansFromContract.data.length > 0) && (hasContractBeenRun != true) ){
+                setHasContractBeenRun(true);
+            }
+           
+            return (
+                <div style={{}}>
+                    Admin Mode: Activated<br></br>
+
+                    <div style={{display:'flex', marginLeft:'10%', marginTop:'4%', }}>
+                        <button style={{}} onClick={()=>{initializeContract()}}>Initialize Contract</button>
+                        <div style={{marginLeft:'3%'}}>{hasContractBeenRun ? <span style={{color:'#00ff00'}}>initialized</span>    : <span style={{color:'#ff0000'}}>uninitialized</span> }</div>
+                    </div>
+
+                    <div>
                     <table style={Styles.table}>
                         <tbody>
                             <tr>
@@ -83,7 +93,7 @@ function initializeContract(){
                             </tr>
 
                      { 
-                        thisArr.map((custodian, index)=> (
+                        CustodiansFromContract.data.map((custodian, index)=> (
                                 <tr key={index}>
                                     <td style={Styles.td}> {custodian.thisAddress} </td>
                                     <td style={Styles.td}>{ parseInt(custodian.voteWeight._hex,16) }</td>
@@ -102,8 +112,8 @@ function initializeContract(){
 
                         </tbody>
                     </table>
-
-                </>
+                    </div>    
+                </div>
             );
         }else {
             return (
