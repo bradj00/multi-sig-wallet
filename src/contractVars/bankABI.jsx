@@ -1,4 +1,4 @@
-export const contractAddress = '0x4E2236A25768af65d12f6a6E29880b7d5f36D413';
+export const contractAddress = '0xEDEa09b4Eb12118157d9e0cE1CF4A8aaD71525aD';
  
 
 export const contractABI = [
@@ -8,13 +8,13 @@ export const contractABI = [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "_from",
+				"name": "fromThisGuy",
 				"type": "address"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "_value",
+				"name": "valueGuy",
 				"type": "uint256"
 			}
 		],
@@ -27,25 +27,25 @@ export const contractABI = [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "_from",
+				"name": "fromGuy",
 				"type": "address"
 			},
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "_sendTo",
+				"name": "sendToGuy",
 				"type": "address"
 			},
 			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "_reason",
+				"name": "reasonGuy",
 				"type": "string"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "amountGuy",
 				"type": "uint256"
 			}
 		],
@@ -104,6 +104,19 @@ export const contractABI = [
 	},
 	{
 		"inputs": [],
+		"name": "firstRun",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getAllApprovalRequests",
 		"outputs": [
 			{
@@ -145,6 +158,44 @@ export const contractABI = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractOwner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getCustodians",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "thisAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "voteWeight",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct MultiSig.Custodian[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",

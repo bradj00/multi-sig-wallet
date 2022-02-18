@@ -3,7 +3,7 @@ import './App.css';
 import ContractWalletBalance from './components/ContractWalletBalance';
 import LeftPanel from './components/LeftPanel';
 import Header from './components/Header';
-import { enableWeb3, isWeb3Enabled, useMoralis } from "react-moralis";
+import { enableWeb3, isWeb3Enabled, useMoralis, is } from "react-moralis";
 import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
@@ -16,7 +16,7 @@ import Proposals from "./components/Proposals";
 import Custodians from './components/Custodians';
 import History from './components/History';
 import Deposits from './components/Depsoits';
-
+import Admin from './components/Admin';
 
 
 
@@ -92,6 +92,7 @@ function App() {
             <Route path='/Custodians' element={<Custodians/>} />
             <Route path='/History' element={<History/>} />
             <Route path='/Deposits' element={<Deposits/>} />
+            <Route path='/Admin' element={<Admin/>} />
         </Routes>
       </div>
     </div>
