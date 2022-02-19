@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Component } from 'react'
-import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription } from 'react-moralis';
+import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 
 
@@ -150,16 +150,57 @@ useEffect(()=>{
   }
 },[getProposalApprovals.data])
 
-
-function statusFunction(signatureStatus){
-  // console.log('status');
-  // console.log(signatureStatus._hex);
-  switch(parseInt(signatureStatus,16)){
-    case 0: return <>'not seen'</>;
-    case 1: return <>'accepted'</>;
-    case 2: return <>'rejected'</>;
+const {account} = useChain();
+function isMeSignatureSubmit(custodian){
+  if (account == null){return<></>}
+  if (account && custodian){
+    if (custodian.toUpperCase() == account.toUpperCase()){
+      return(<button>Sign</button>)
+    }else {
+      return <></>
+    }
   }
 }
+
+useEffect(()=>{
+  console.log('account is: '+account)
+
+},[account])
+
+  function statusFunction(signatureStatus, custodian){
+    signatureStatus = parseInt(signatureStatus,16);
+    let selectedItem = 'ugga';
+    let notSelected1 = 55;
+    let notSelected2 = 66;  
+    switch(signatureStatus){
+      case 0: selectedItem = 'not seen'; notSelected1='approved'; notSelected2='rejected';break;
+      case 1: selectedItem = 'approved'; notSelected1='not seen'; notSelected2='rejected';break;
+      case 2: selectedItem = 'rejected'; notSelected1='approved'; notSelected2='not seen';break;
+    } 
+    console.log(signatureStatus, custodian);
+    if (account == null){return<></>}
+    if (account && custodian){
+
+      if (custodian.toUpperCase() == account.toUpperCase()){
+          return(
+            <select defaultValue={selectedItem}>
+              <option value={selectedItem}>{selectedItem}</option>
+              <option value={notSelected1}>{notSelected1}</option>
+              <option value={notSelected2}>{notSelected2}</option>
+            </select>
+            
+          )
+      }
+      return(
+        <>{selectedItem}</>
+
+      )
+    }
+    
+    
+
+  }
+
 
   if (data && !isLoading && !isFetching){
 
@@ -220,20 +261,24 @@ function statusFunction(signatureStatus){
           <tr>
             <th style={Styles.th}>Custodian</th>
             <th style={Styles.th}>Signature</th>
+            <th style={Styles.th}></th>
 
           </tr>
           <tr  style={{userSelect:'none'}}   >
               <td style={Styles.td}>{updatedProposalsState[0].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[0].status)} </td>
-              {/* <td style={Styles.td}>{updatedProposalsState[0].status ? 'accepted' : 'rejected' } </td> */}
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[0].status, updatedProposalsState[0].custodianMember)} </td>
+              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[0].custodianMember)} </td>
+              
           </tr>
           <tr  style={{userSelect:'none'}}   >
               <td style={Styles.td}>{updatedProposalsState[1].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[1].status)} </td>
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[1].status, updatedProposalsState[1].custodianMember)} </td>
+              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[1].custodianMember)} </td>
           </tr>
           <tr  style={{userSelect:'none'}}   >
               <td style={Styles.td}>{updatedProposalsState[2].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[2].status)} </td>
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[2].status, updatedProposalsState[2].custodianMember)} </td>
+              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[2].custodianMember)} </td>
           </tr>
             {/* {
             updatedProposalsState.map((custodian,index)=>{
