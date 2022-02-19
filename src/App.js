@@ -25,6 +25,7 @@ import AddressBook from './components/AddressBook';
 
 const Styles={
   container: {
+    border: '0px solid #fff',
     color:'#fff',
     height:'100%',
     width:'100%',
@@ -54,6 +55,8 @@ const Styles={
 
   },
   content:{
+    background: 'rgb(0,0,0)',
+    background: 'linear-gradient(185deg, rgba(51,51,51,0.7595413165266106) 0%, rgba(10,10,10,0.6418942577030813) 99%, rgba(24,24,24,0.40379901960784315) 100%)',
     marginTop:'1%',
     position:'absolute',
     top:'6%',

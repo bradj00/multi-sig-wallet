@@ -12,11 +12,17 @@ import '../styles/styles.css'
 import Admin from './Admin';
 import AdminLink from './subComponents/AdminLink';
 
-
+const Styles = {
+  leftPanel:{
+    width:'100%',
+    background: 'rgb(41,41,41)',
+    background: 'linear-gradient(185deg, rgba(41,41,41,0.7595413165266106) 0%, rgba(0,0,0,0.6418942577030813) 99%, rgba(24,24,24,0.40379901960784315) 100%)'
+  }
+}
 
 const LeftPanel = () => {
   return (
-    <div>
+    <div style={Styles.leftPanel}>
       <div className="menu">
       <ul>
           <li> <Link to="/Proposals">Proposals</Link> </li>

@@ -14,7 +14,7 @@ const Styles= {
   },
   table: {
     
-    marginTop:'10%',
+    marginTop:'0%',
     border:'1px solid black',
     width: '75%',
     tableLayout: 'auto'
@@ -25,15 +25,16 @@ const Styles= {
   },
   td: {
 
-    borderLeft:'1px solid black',
-    borderRight:'1px solid black'
+    border:'1px solid black',
+    // borderLeft:'1px solid black',
+    // borderRight:'1px solid black'
   },
   propsalInfoDiv: {
     position:'absolute',
     left: '1%',
     width: '75%',
     height: '40%',
-    bottom:'5%',
+    bottom:'1%',
     border: '0px solid black',
     
   },
@@ -63,18 +64,21 @@ const Proposals = () => {
   const [receipient, setReceipient] = useState('');
   const [textArea, setTextArea] = useState('');
 
+  const [updatedProposalsState, setUpdatedProposalsState] = useState(['0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749',false,'0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d',false,'0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17',false]);
+  const [selectedRequestId, setSelectedRequestId] = useState(-1);
+
   const [updatedProposals, setUpdatedProposals] = useState([]);
 
-  useMoralisSubscription("MultiSigAlertNewApprovalJ", q => q, [], {
+  useMoralisSubscription("MultiSigAlertNewApprovalK", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
 
   function updateProposalTable(data){
-    console.log('adding new proposal:');
-    console.log(data);
-    console.log(Object.keys(data));
-    console.log(data.attributes);
-    console.log(data.attributes.amountGuy);
+    // console.log('adding new proposal:');
+    // console.log(data);
+    // console.log(Object.keys(data));
+    // console.log(data.attributes);
+    // console.log(data.attributes.amountGuy);
     let newProposalsArr = [...updatedProposals];
     newProposalsArr.reverse();
     newProposalsArr.push(data);
@@ -97,10 +101,18 @@ const Proposals = () => {
     functionName: "newApproval",
     params: {_sendTo: receipient,  _reason: textArea, _amount: sendAmount}
   }); 
+  const getProposalApprovals = useWeb3ExecuteFunction({ 
+    chain:'mumbai',
+    abi: contractABI,
+    contractAddress: contractAddress,
+    functionName: "getApprovalStatus",
+    params: {_requestId: selectedRequestId}
+  }); 
 
   
   useEffect(()=>{
     fetch();
+    getProposalInfo(0);
   },[])
 
 
@@ -114,6 +126,41 @@ const Proposals = () => {
     submitNewProposal.fetch();
   }
 
+  function getProposalInfo(id){
+    console.log('id: '+id);
+    setSelectedRequestId(id);
+    getProposalApprovals.fetch();
+  }
+
+
+
+
+useEffect(()=>{
+  console.log('updated state: ')
+  console.log(updatedProposalsState)
+  console.log(updatedProposalsState[1].receipient)
+  console.log(updatedProposalsState[1].status)
+},[updatedProposalsState]);
+
+useEffect(()=>{
+  console.log('got data back: ');
+  console.log(getProposalApprovals.data);
+  if (getProposalApprovals.data != null){
+    setUpdatedProposalsState(getProposalApprovals.data);
+  }
+},[getProposalApprovals.data])
+
+
+function statusFunction(signatureStatus){
+  // console.log('status');
+  // console.log(signatureStatus._hex);
+  switch(parseInt(signatureStatus,16)){
+    case 0: return <>'not seen'</>;
+    case 1: return <>'accepted'</>;
+    case 2: return <>'rejected'</>;
+  }
+}
+
   if (data && !isLoading && !isFetching){
 
     return(
@@ -122,9 +169,9 @@ const Proposals = () => {
           Open Proposals
         </div>
 
-        <div style={{position:'absolute', left:'1%', width:'100%'}}>
+        <div style={{ position:'absolute', left:'1%', width:'100%', top:'17%', height:'45%', overflowY:'scroll', "::WebkitScrollbar": { width: '0', }}}>
         <table style={Styles.table}>
-          <tbody>
+          <tbody> 
           <tr>
             <th style={Styles.th}>ID </th>
             <th style={Styles.th}>Receipient </th>
@@ -133,9 +180,9 @@ const Proposals = () => {
             <th style={Styles.th}>Approvals </th>
             <th style={Styles.th}>Status </th>
           </tr>
-         { 
+        { 
           updatedProposals.map((obj2, index) => (
-            <tr key={index}>
+            <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(obj2.attributes.idGuy) }  }>
               <td style={Styles.td}>{obj2.attributes.idGuy  } </td>
               <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
               <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
@@ -144,12 +191,12 @@ const Proposals = () => {
               <td style={Styles.td}> In-Progress </td>
             </tr>
           ))
-          }
+        }
 
           {
           data.slice(0).reverse().map((obj, index) => (
             
-            <tr key={index}>
+            <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1]._hex, 16)) }  }>
               <td style={Styles.td}>{ parseInt(obj[1]._hex, 16) }</td>
               <td style={Styles.td}>{ obj[0] }</td>
               <td style={Styles.td}>{JSON.stringify(obj[3])}</td>
@@ -173,9 +220,29 @@ const Proposals = () => {
           <tr>
             <th style={Styles.th}>Custodian</th>
             <th style={Styles.th}>Signature</th>
-            <th style={Styles.th}>Memo</th>
 
           </tr>
+          <tr  style={{userSelect:'none'}}   >
+              <td style={Styles.td}>{updatedProposalsState[0].custodianMember} </td>
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[0].status)} </td>
+              {/* <td style={Styles.td}>{updatedProposalsState[0].status ? 'accepted' : 'rejected' } </td> */}
+          </tr>
+          <tr  style={{userSelect:'none'}}   >
+              <td style={Styles.td}>{updatedProposalsState[1].custodianMember} </td>
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[1].status)} </td>
+          </tr>
+          <tr  style={{userSelect:'none'}}   >
+              <td style={Styles.td}>{updatedProposalsState[2].custodianMember} </td>
+              <td style={Styles.td}>{statusFunction(updatedProposalsState[2].status)} </td>
+          </tr>
+            {/* {
+            updatedProposalsState.map((custodian,index)=>{
+              <tr key={index} style={{userSelect:'none'}}   >
+                <td style={Styles.td}>{custodian.receipient} </td>
+                <td style={Styles.td}>{custodian.status ? 'accepted' : 'rejected' } </td>
+              </tr>
+            })
+            } */}
           </tbody>
         </table>
         </div>

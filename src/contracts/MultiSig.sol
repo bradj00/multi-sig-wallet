@@ -8,14 +8,13 @@ contract MultiSig {
         0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,
         0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17
     ];
-
     event Deposit(address indexed fromThisGuy, uint valueGuy);
     event alertNewApproval(address indexed fromGuy, address sendToGuy, string  reasonGuy, uint amountGuy, uint idGuy);
     
     uint thresholdForApprovalToPass;
     uint256 contractBalance = address(this).balance;
-    
- 
+
+
     struct Custodian {
         address thisAddress;
         uint voteWeight;
@@ -47,10 +46,35 @@ contract MultiSig {
     }
     Requests[] transferRequests;
    
+    struct ApprovalStruct {
+        address custodianMember;
+        uint status; //0 untouched. 1 approved. 2 rejected
+
+    }
+    //returns( uint[] memory)
+    //approved[_requestId]
+    mapping(uint => mapping(address=> uint)) public approvedStatus;
     
-    function getAllApprovalRequests() public view returns (Requests[] memory){
+    function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [3] memory)  {
+        ApprovalStruct [3] memory custodianApprovals;
+
+        for (uint i=0; i < approvers.length; i++) {
+
+            ApprovalStruct memory newCustodianApprovals = ApprovalStruct(approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
+            custodianApprovals[i] = newCustodianApprovals;
+        }
+        return(custodianApprovals);
+        
+    }
+
+    function deposit() public payable {}
+
+
+    function getAllApprovalRequests() public view returns (Requests [] memory){
         return(transferRequests);
     }
+
+
 
     function newApproval(address _sendTo, string memory _reason, uint _amount) public {
         Requests memory newRequest = Requests(_sendTo, transferRequests.length, _amount, _reason);
@@ -71,8 +95,9 @@ contract MultiSig {
     }
 
 
-    function approveRequest(uint _requestId, bool approval) public returns(bool succeeds) {
-
+    function approveRequest(uint _requestId, uint thisApproval) public {
+        if ((thisApproval != 0) && (thisApproval != 1) && (thisApproval!=2)){return();}
+        approvedStatus[_requestId][msg.sender] = thisApproval;
     }
 
     function getCustodians() public view returns (Custodian [] memory){

@@ -1,7 +1,7 @@
-export const contractAddress = '0x32543FF5a4573aE8918C510572aca5bf5B767588';
+export const contractAddress = '0x13b9eaE6da2376939398a872c493EEfAc66D9B02';
  
 
-export const contractABI = [
+export const contractABI =[
 	{
 		"anonymous": false,
 		"inputs": [
@@ -47,6 +47,12 @@ export const contractABI = [
 				"internalType": "uint256",
 				"name": "amountGuy",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "idGuy",
+				"type": "uint256"
 			}
 		],
 		"name": "alertNewApproval",
@@ -60,20 +66,38 @@ export const contractABI = [
 				"type": "uint256"
 			},
 			{
-				"internalType": "bool",
-				"name": "approval",
-				"type": "bool"
+				"internalType": "uint256",
+				"name": "thisApproval",
+				"type": "uint256"
 			}
 		],
 		"name": "approveRequest",
-		"outputs": [
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
-				"internalType": "bool",
-				"name": "succeeds",
-				"type": "bool"
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
-		"stateMutability": "nonpayable",
+		"name": "approvedStatus",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -93,6 +117,13 @@ export const contractABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -145,6 +176,37 @@ export const contractABI = [
 				"internalType": "struct MultiSig.Requests[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_requestId",
+				"type": "uint256"
+			}
+		],
+		"name": "getApprovalStatus",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "custodianMember",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "status",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct MultiSig.ApprovalStruct[3]",
+				"name": "",
+				"type": "tuple[3]"
 			}
 		],
 		"stateMutability": "view",
