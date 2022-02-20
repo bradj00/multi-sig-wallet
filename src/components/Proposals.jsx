@@ -68,10 +68,22 @@ const Proposals = () => {
   const [selectedRequestId, setSelectedRequestId] = useState(-1);
 
   const [updatedProposals, setUpdatedProposals] = useState([]);
-
-  useMoralisSubscription("MultiSigAlertNewApprovalK", q => q, [], { 
+  
+  ////////
+  const [selectedItemState, setSelectedItemState] = useState();
+  const [selectedItemStateId, setSelectedItemStateId] = useState();
+  ////////
+  
+  useMoralisSubscription("MultiSigAlertNewApprovalR", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
+  useMoralisSubscription("NewApprovalSignature", q => q, [], { 
+    onUpdate: data => updateApprovalSignature(data),
+  });
+
+  function updateApprovalSignature(){
+    getProposalApprovals.fetch();
+  }
 
   function updateProposalTable(data){
     // console.log('adding new proposal:');
@@ -108,6 +120,13 @@ const Proposals = () => {
     functionName: "getApprovalStatus",
     params: {_requestId: selectedRequestId}
   }); 
+  const signProposal = useWeb3ExecuteFunction({ 
+    chain:'mumbai',
+    abi: contractABI,
+    contractAddress: contractAddress,
+    functionName: "approveRequest",
+    params: {_requestId: selectedRequestId, thisApproval: selectedItemStateId}
+  }); 
 
   
   useEffect(()=>{
@@ -132,7 +151,23 @@ const Proposals = () => {
     getProposalApprovals.fetch();
   }
 
+  function submitProposalSignature(){
+    let approvalId = -1;
+    switch (selectedItemState){
+      case 'not seen': 
+        approvalId = 0;
+        break;
+      case 'approved': 
+        approvalId = 1;
+        break;
+      case 'rejected': 
+        approvalId = 2;
+        break;
 
+    }
+    setSelectedItemStateId(approvalId);
+    signProposal.fetch();
+  }
 
 
 useEffect(()=>{
@@ -155,7 +190,7 @@ function isMeSignatureSubmit(custodian){
   if (account == null){return<></>}
   if (account && custodian){
     if (custodian.toUpperCase() == account.toUpperCase()){
-      return(<button>Sign</button>)
+      return(<button onClick={()=>{submitProposalSignature()} } >Sign</button>)
     }else {
       return <></>
     }
@@ -177,13 +212,15 @@ useEffect(()=>{
       case 1: selectedItem = 'approved'; notSelected1='not seen'; notSelected2='rejected';break;
       case 2: selectedItem = 'rejected'; notSelected1='approved'; notSelected2='not seen';break;
     } 
+
+
     console.log(signatureStatus, custodian);
     if (account == null){return<></>}
     if (account && custodian){
 
       if (custodian.toUpperCase() == account.toUpperCase()){
           return(
-            <select defaultValue={selectedItem}>
+            <select onChange={(e) => setSelectedItemState(e.target.value)} >
               <option value={selectedItem}>{selectedItem}</option>
               <option value={notSelected1}>{notSelected1}</option>
               <option value={notSelected2}>{notSelected2}</option>
@@ -200,7 +237,23 @@ useEffect(()=>{
     
 
   }
+  useEffect(()=>{
+    console.log('selectedItemState:');
+    console.log(selectedItemState);
+    
+    switch (selectedItemState){
+      case 'not seen': 
+        setSelectedItemStateId(0);
+        break;
+      case 'approved': 
+        setSelectedItemStateId(1);
+        break;
+      case 'rejected': 
+        setSelectedItemStateId(2);
+        break;
 
+    }
+  },[selectedItemState])
 
   if (data && !isLoading && !isFetching){
 
@@ -218,7 +271,7 @@ useEffect(()=>{
             <th style={Styles.th}>Receipient </th>
             <th style={Styles.th}>Reason </th>
             <th style={Styles.th}>Amount </th>
-            <th style={Styles.th}>Approvals </th>
+            <th style={Styles.th}>Votes </th>
             <th style={Styles.th}>Status </th>
           </tr>
         { 
@@ -256,6 +309,7 @@ useEffect(()=>{
         </div>
 
         <div style={Styles.propsalInfoDiv}>
+          Request ID: {selectedRequestId}
         <table style={Styles.table2}>
           <tbody>
           <tr>
