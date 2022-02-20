@@ -74,10 +74,10 @@ const Proposals = () => {
   const [selectedItemStateId, setSelectedItemStateId] = useState();
   ////////
   
-  useMoralisSubscription("MultiSigAlertNewApprovalQ", q => q, [], { 
+  useMoralisSubscription("MultiSigAlertNewApprovalX", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
-  useMoralisSubscription("NewApprovalSignature", q => q, [], { 
+  useMoralisSubscription("NewApprovalSignatureX", q => q, [], { 
     onUpdate: data => updateApprovalSignature(data),
   });
 
@@ -173,12 +173,12 @@ const Proposals = () => {
 useEffect(()=>{
   console.log('updated state: ')
   console.log(updatedProposalsState)
-  console.log(updatedProposalsState[1].receipient)
-  console.log(updatedProposalsState[1].status)
+  // console.log(updatedProposalsState[1].custodianMember)
+  // console.log(updatedProposalsState[1].status)
 },[updatedProposalsState]);
 
 useEffect(()=>{
-  console.log('got data back: ');
+  console.log('got data back for id: '+selectedRequestId);
   console.log(getProposalApprovals.data);
   if (getProposalApprovals.data != null){
     setUpdatedProposalsState(getProposalApprovals.data);
@@ -194,6 +194,22 @@ function isMeSignatureSubmit(custodian){
     }else {
       return <></>
     }
+  }
+}
+
+
+function colorApprovalItem(param){
+  switch(param){
+    case 'not seen': 
+      return({color: '#3366ff'})
+      break;
+    case 'approved': 
+      return({color: '#00ff00'})
+      break;
+    case 'rejected': 
+      return({color: '#ff0000'})
+      break;
+    
   }
 }
 
@@ -220,12 +236,14 @@ useEffect(()=>{
 
       if (custodian.toUpperCase() == account.toUpperCase()){
           return(
-            <select onChange={(e) => setSelectedItemState(e.target.value)} >
-              <option value={selectedItem}>{selectedItem}</option>
-              <option value={notSelected1}>{notSelected1}</option>
-              <option value={notSelected2}>{notSelected2}</option>
-            </select>
-            
+            <div >
+              <select onChange={(e) => setSelectedItemState(e.target.value)} >
+                {/* <option value={selectedItem}>{selectedItem}</option> */}
+                <option  value={selectedItem}>{selectedItem}</option>
+                <option  value={notSelected1}>{notSelected1}</option>
+                <option  value={notSelected2}>{notSelected2}</option>
+              </select>
+              </div>
           )
       }
       return(
@@ -318,12 +336,22 @@ useEffect(()=>{
             <th style={Styles.th}></th>
 
           </tr>
-          <tr  style={{userSelect:'none'}}   >
-              <td style={Styles.td}>{updatedProposalsState[0].custodianMember} </td>
+            {
+              updatedProposalsState.map((proposalState,index)=>{
+                return(
+                  <tr key={index}  style={{userSelect:'none'}}   >
+                    <td style={Styles.td}>{proposalState.custodianMember} </td>
+                    <td style={Styles.td}>{statusFunction(proposalState.status, proposalState.custodianMember)} </td>
+                    <td style={Styles.td}>{isMeSignatureSubmit(proposalState.custodianMember)} </td>
+                  </tr>
+                )
+              })
+
+            }
+              {/* <td style={Styles.td}>{updatedProposalsState[0].custodianMember} </td>
               <td style={Styles.td}>{statusFunction(updatedProposalsState[0].status, updatedProposalsState[0].custodianMember)} </td>
               <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[0].custodianMember)} </td>
               
-          </tr>
           <tr  style={{userSelect:'none'}}   >
               <td style={Styles.td}>{updatedProposalsState[1].custodianMember} </td>
               <td style={Styles.td}>{statusFunction(updatedProposalsState[1].status, updatedProposalsState[1].custodianMember)} </td>
@@ -333,7 +361,7 @@ useEffect(()=>{
               <td style={Styles.td}>{updatedProposalsState[2].custodianMember} </td>
               <td style={Styles.td}>{statusFunction(updatedProposalsState[2].status, updatedProposalsState[2].custodianMember)} </td>
               <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[2].custodianMember)} </td>
-          </tr>
+          </tr> */}
             {/* {
             updatedProposalsState.map((custodian,index)=>{
               <tr key={index} style={{userSelect:'none'}}   >

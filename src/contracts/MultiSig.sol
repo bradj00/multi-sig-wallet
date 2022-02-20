@@ -1,4 +1,4 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.12;
 pragma abicoder v2;
 
 contract MultiSig {
@@ -6,11 +6,14 @@ contract MultiSig {
     address[] public approvers = [
         0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,
         0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,
-        0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17
+        0x813426c035f2658E50bFAEeBf3AAab073D956F31,
+        0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1
     ];
     event Deposit(address indexed fromThisGuy, uint valueGuy);
     event alertNewApproval(address indexed fromGuy, address sendToGuy, string  reasonGuy, uint amountGuy, uint idGuy);
-    
+    event Approval(address indexed signer, uint requestId, uint approvalId);
+
+
     uint thresholdForApprovalToPass;
     uint256 contractBalance = address(this).balance;
 
@@ -55,8 +58,9 @@ contract MultiSig {
     //approved[_requestId]
     mapping(uint => mapping(address=> uint)) public approvedStatus;
     
-    function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [3] memory)  {
-        ApprovalStruct [3] memory custodianApprovals;
+    function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [] memory)  {
+
+        ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
 
         for (uint i=0; i < approvers.length; i++) {
 
@@ -98,6 +102,7 @@ contract MultiSig {
     function approveRequest(uint _requestId, uint thisApproval) public {
         if ((thisApproval != 0) && (thisApproval != 1) && (thisApproval!=2)){return();}
         approvedStatus[_requestId][msg.sender] = thisApproval;
+        emit Approval(msg.sender, _requestId, thisApproval);
     }
 
     function getCustodians() public view returns (Custodian [] memory){

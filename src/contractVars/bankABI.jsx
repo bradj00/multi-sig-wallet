@@ -1,4 +1,4 @@
-export const contractAddress = '0xC94d2B3A33323136D6fb71DAD93019aa883f8E6B';
+export const contractAddress = '0xd83584F2200EC38740200575B2dF4A994A905b52';
  
 
 export const contractABI =[
@@ -229,9 +229,9 @@ export const contractABI =[
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct MultiSig.ApprovalStruct[3]",
+				"internalType": "struct MultiSig.ApprovalStruct[]",
 				"name": "",
-				"type": "tuple[3]"
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
