@@ -74,7 +74,7 @@ const Proposals = () => {
   const [selectedItemStateId, setSelectedItemStateId] = useState();
   ////////
   
-  useMoralisSubscription("MultiSigAlertNewApprovalR", q => q, [], { 
+  useMoralisSubscription("MultiSigAlertNewApprovalQ", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
   useMoralisSubscription("NewApprovalSignature", q => q, [], { 
