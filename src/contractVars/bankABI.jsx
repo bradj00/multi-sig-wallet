@@ -1,11 +1,11 @@
-export const contractAddress = '0xd83584F2200EC38740200575B2dF4A994A905b52';
+export const contractAddress = '0xA150786963Fd7180EA710e5fBA80298f92F6aAEA';
  
 
 export const contractABI =[
 	{
 		"anonymous": false,
 		"inputs": [
-			{ 
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "signer",
@@ -201,6 +201,28 @@ export const contractABI =[
 				"internalType": "struct MultiSig.Requests[]",
 				"name": "",
 				"type": "tuple[]"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "custodianMember",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "status",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct MultiSig.ApprovalStruct[][]",
+				"name": "",
+				"type": "tuple[][]"
 			}
 		],
 		"stateMutability": "view",
@@ -218,6 +240,11 @@ export const contractABI =[
 		"outputs": [
 			{
 				"components": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "custodianMember",

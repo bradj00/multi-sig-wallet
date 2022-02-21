@@ -50,34 +50,38 @@ contract MultiSig {
     Requests[] transferRequests;
    
     struct ApprovalStruct {
+        uint proposalId;
         address custodianMember;
         uint status; //0 untouched. 1 approved. 2 rejected
-
     }
     //returns( uint[] memory)
     //approved[_requestId]
     mapping(uint => mapping(address=> uint)) public approvedStatus;
-    
+   
+    function deposit() public payable {}
+
+ 
     function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [] memory)  {
-
         ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
-
         for (uint i=0; i < approvers.length; i++) {
-
-            ApprovalStruct memory newCustodianApprovals = ApprovalStruct(approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
+            ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
             custodianApprovals[i] = newCustodianApprovals;
         }
         return(custodianApprovals);
-        
     }
+ 
 
-    function deposit() public payable {}
 
 
-    function getAllApprovalRequests() public view returns (Requests [] memory){
-        return(transferRequests);
+ 
+    function getAllApprovalRequests() public view returns (Requests [] memory, ApprovalStruct[][] memory){ 
+        ApprovalStruct [][] memory tempApprovalStatusArray = new ApprovalStruct[][](transferRequests.length);
+        for (uint i=0; i < transferRequests.length; i++) {
+            tempApprovalStatusArray[i] = getApprovalStatus(transferRequests[i].id);
+        }
+        return(transferRequests, tempApprovalStatusArray);
     }
-
+//0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,0,0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,0,0x813426c035f2658E50bFAEeBf3AAab073D956F31,0,0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1,0
 
 
     function newApproval(address _sendTo, string memory _reason, uint _amount) public {

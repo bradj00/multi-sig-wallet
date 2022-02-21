@@ -95,6 +95,7 @@ const Proposals = () => {
     setUpdatedProposals(newProposalsArr);
   }
 
+    //getAllApprovalRequests
   const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({
     chain:'mumbai',
     abi: contractABI,
@@ -132,6 +133,21 @@ const Proposals = () => {
 
   },[])
 
+  useEffect(() => {
+    if (data && data[0] && data != null){
+      console.log('data: ', data);
+    for (let i = 0; i < data[0].length; i++){
+      console.log('========');
+      console.log(Object.keys(data[0][i]));
+      console.log(data[0][i].receipient);
+      console.log(parseInt(data[0][i].id._hex, 16));
+      console.log(parseInt(data[0][i].amount._hex, 16) );
+      console.log(data[0][i]._reason);
+      console.log('-------');
+
+    }
+    }
+  },[data]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -143,9 +159,7 @@ const Proposals = () => {
     console.log('id: '+id);
     setSelectedRequestId(id);
     getProposalApprovals.fetch();
-    if (id != -1){
-      setPropsalInfoDivDisplay('100%');
-    }
+
 
   }
 
@@ -169,16 +183,17 @@ const Proposals = () => {
 
 
 useEffect(()=>{
-  console.log('updated state: ')
-  console.log(updatedProposalsState)
+  // console.log('updated state: ')
+  // console.log(updatedProposalsState)
   // console.log(updatedProposalsState[1].custodianMember)
   // console.log(updatedProposalsState[1].status)
 },[updatedProposalsState]);
 
 useEffect(()=>{
-  console.log('got data back for id: '+selectedRequestId);
-  console.log(getProposalApprovals.data);
+  // console.log('got data back for id: '+selectedRequestId);
+  // console.log(getProposalApprovals.data);
   if (getProposalApprovals.data != null){
+    setPropsalInfoDivDisplay('100%');
     setUpdatedProposalsState(getProposalApprovals.data);
   }
 },[getProposalApprovals.data])
@@ -193,6 +208,11 @@ function isMeSignatureSubmit(custodian){
       return <></>
     }
   }
+}
+
+function voteCounter(proposalId){
+  //get proposalId Approval Status  
+
 }
 
 
@@ -271,7 +291,9 @@ useEffect(()=>{
     }
   },[selectedItemState])
 
-  if (data && !isLoading && !isFetching){
+  if (data && data[0] && data != null && !isLoading && !isFetching){
+    console.log('GOT SOME DATA: ');
+    console.log(data);
 
     return(
     <div style={Styles.container}>
@@ -298,23 +320,25 @@ useEffect(()=>{
                 <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
                 <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
                 <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
-                <td style={Styles.td}> 0 / 3 </td>
+                <td style={Styles.td}> {voteCounter(obj2.attributes.idGuy)} </td>
                 <td style={Styles.td}> In-Progress </td>
               </tr>
             ))
           }
 
             {
-            data.slice(0).reverse().map((obj, index) => (
-              
-              <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1]._hex, 16)) }  }>
-                <td style={Styles.td}>{ parseInt(obj[1]._hex, 16) }</td>
-                <td style={Styles.td}>{ obj[0] }</td>
-                <td style={Styles.td}>{JSON.stringify(obj[3])}</td>
-                <td style={Styles.td}>{ parseInt(obj[2]._hex, 16) }</td>
-                <td style={Styles.td}> 0 / 3 </td>
+            data[0].slice(0).reverse().map((obj, index) => (
+              <>
+              {JSON.stringify( )}
+              <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[0][1]._hex, 16)) }  }>
+                <td style={Styles.td}>{ parseInt(obj[1]) }</td>               
+                <td style={Styles.td}>{ obj[0] }</td>                                   
+                <td style={Styles.td}>{obj[3]}</td>                  
+                <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>              
+                <td style={Styles.td}> 0 / 3 </td>                                     
                 <td style={Styles.td}> In-Progress </td>
               </tr>
+              </>
               
             ))
             
