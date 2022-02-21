@@ -55,6 +55,7 @@ const Proposals = () => {
   
     
   const [propsalInfoDivDisplay, setPropsalInfoDivDisplay] = useState('0%');
+  const [voteCount, setVoteCount] = useState([]);
 
 
   const [sendAmount, setSendAmount] = useState('');
@@ -134,19 +135,19 @@ const Proposals = () => {
   },[])
 
   useEffect(() => {
-    if (data && data[0] && data != null){
-      console.log('data: ', data);
-    for (let i = 0; i < data[0].length; i++){
-      console.log('========');
-      console.log(Object.keys(data[0][i]));
-      console.log(data[0][i].receipient);
-      console.log(parseInt(data[0][i].id._hex, 16));
-      console.log(parseInt(data[0][i].amount._hex, 16) );
-      console.log(data[0][i]._reason);
-      console.log('-------');
+    // if (data && data[0] && data != null){
+    //   console.log('data: ', data);
+    // for (let i = 0; i < data[0].length; i++){
+      // console.log('========');
+      // console.log(Object.keys(data[0][i]));
+      // console.log(data[0][i].receipient);
+      // console.log(parseInt(data[0][i].id._hex, 16));
+      // console.log(parseInt(data[0][i].amount._hex, 16) );
+      // console.log(data[0][i]._reason);
+      // console.log('-------');
 
-    }
-    }
+    // }
+    // }
   },[data]);
 
   const handleSubmit = (e) => {
@@ -210,9 +211,34 @@ function isMeSignatureSubmit(custodian){
   }
 }
 
-function voteCounter(proposalId){
+function calcVotes(id){
+  
   //get proposalId Approval Status  
+  // console.log('ALL PROPOSAL SIGNATURES: ');
+  // console.log(data[1]);
+  let voteCountTemp = 0;
+  for (let i = 0; i <= data[1][id].length; i++){
+    if (i == data[1][id].length){
+      // console.log('VOTE COUNT: '+voteCountTemp);
+      return (voteCountTemp);
+    }
+    // console.log(Object.keys(data[1][id][i]) );
+    let convertedStatus = parseInt(data[1][id][i].status);
+    if (convertedStatus != 0){
+      voteCountTemp++;
+    }
 
+  }
+  data[1][id].map((obj)=>{
+    // console.log(obj.custodianMember, parseInt(obj.proposalId._hex), parseInt(obj.status._hex) )
+    let convertedStatus = parseInt(obj.status._hex); 
+    if (convertedStatus != 0){
+      
+      // setVoteCount({...voteCount, id: (voteCount[id]+1) }) // WILL NOT WORK
+    }else{
+      // console.log('ignoring NOT SEEN vote.');
+    }
+  })
 }
 
 
@@ -232,7 +258,13 @@ function colorApprovalItem(param){
 }
 
 useEffect(()=>{
-  console.log('account is: '+account)
+  // console.log('votecount is:');
+  // console.log(voteCount);
+
+},[voteCount]);
+
+  useEffect(()=>{
+  // console.log('account is: '+account)
 
 },[account])
 
@@ -248,7 +280,7 @@ useEffect(()=>{
     } 
 
 
-    console.log(signatureStatus, custodian);
+    // console.log(signatureStatus, custodian);
     if (account == null){return<></>}
     if (account && custodian){
 
@@ -274,8 +306,8 @@ useEffect(()=>{
 
   }
   useEffect(()=>{
-    console.log('selectedItemState:');
-    console.log(selectedItemState);
+    // console.log('selectedItemState:');
+    // console.log(selectedItemState);
     
     switch (selectedItemState){
       case 'not seen': 
@@ -292,8 +324,8 @@ useEffect(()=>{
   },[selectedItemState])
 
   if (data && data[0] && data != null && !isLoading && !isFetching){
-    console.log('GOT SOME DATA: ');
-    console.log(data);
+    // console.log('GOT SOME DATA: ');
+    // console.log(data);
 
     return(
     <div style={Styles.container}>
@@ -320,7 +352,7 @@ useEffect(()=>{
                 <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
                 <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
                 <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
-                <td style={Styles.td}> {voteCounter(obj2.attributes.idGuy)} </td>
+                <td style={Styles.td}> {calcVotes(obj2.attributes.idGuy)} </td>
                 <td style={Styles.td}> In-Progress </td>
               </tr>
             ))
@@ -328,18 +360,18 @@ useEffect(()=>{
 
             {
             data[0].slice(0).reverse().map((obj, index) => (
-              <>
-              {JSON.stringify( )}
-              <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[0][1]._hex, 16)) }  }>
+            
+              <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.td}>{ parseInt(obj[1]) }</td>               
                 <td style={Styles.td}>{ obj[0] }</td>                                   
                 <td style={Styles.td}>{obj[3]}</td>                  
                 <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>              
-                <td style={Styles.td}> 0 / 3 </td>                                     
+                                   
+                <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
                 <td style={Styles.td}> In-Progress </td>
               </tr>
-              </>
-              
+             
+            
             ))
             
           }
