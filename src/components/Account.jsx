@@ -26,7 +26,7 @@ const Account = () => {
 
     return (
         <div>
-          Welcome <span style={{fontSize:'20px', color:'#00f8a2', marginRight:'20px'}}>{getEllipsisTxt(address, 5)}</span>
+          <span style={{fontSize:'20px', color:'#00f8a2', marginRight:'20px'}}>{getEllipsisTxt(address, 5)}</span>
           <button onClick={() => logout()}>Sign Out</button>
         </div>
       );

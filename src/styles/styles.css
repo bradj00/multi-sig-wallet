@@ -16,5 +16,21 @@ ul {
     font-size: 2em;
     line-height: 40px;
     height: 40px;
-    
+
+  }
+  a {
+    color: #ddd;
+    text-decoration: none;
+    filter: grayscale(70%);
+  }
+  a:hover{
+    color: orange;
+    filter: grayscale(0%);
+  }
+
+  .navLink {
+    color: '#fff';
+  }
+  .navLink:hover {
+    color :"#00ff00";
   }

@@ -45,9 +45,9 @@ const Styles={
     display:'flex',
     position:'absolute',
     left:'0%',
-    top:'5%',
-    height: '95%',
-    width:'20%',
+    top:'0%',
+    height: '100%',
+    width:'15%',
     justifyContent:'center',
     backgroundColor:'#777'
   },
@@ -59,11 +59,11 @@ const Styles={
     background: 'linear-gradient(185deg, rgba(51,51,51,0.7595413165266106) 0%, rgba(10,10,10,0.6418942577030813) 99%, rgba(24,24,24,0.40379901960784315) 100%)',
     marginTop:'1%',
     position:'absolute',
-    top:'6%',
+    top:'0%',
     right:'0.5%',
     border: '0px solid #00ff00',
-    width: '79%',
-    height:'92%',
+    width: '84%',
+    height:'100%',
 
 
   }
@@ -84,9 +84,9 @@ function App() {
  
     <Router>
     <div className="App" style={Styles.container}>
-      <div style={Styles.header}>
+      {/* <div style={Styles.header}>
         <Header />
-      </div>
+      </div> */}
       <div style={Styles.leftNavBar}>
         <LeftPanel />
       </div>
