@@ -1,4 +1,4 @@
-export const contractAddress = '0xA150786963Fd7180EA710e5fBA80298f92F6aAEA';
+export const contractAddress = '0xf2d73CdC88494bE097724584088306BDd510c4bd';
  
 
 export const contractABI =[
@@ -142,13 +142,6 @@ export const contractABI =[
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "payable",
 		"type": "function"
 	},
 	{

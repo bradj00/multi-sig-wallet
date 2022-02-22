@@ -71,7 +71,14 @@ contract MultiSig {
     }
  
 
+    function withdraw(uint amount, address payable destAddr) public {
+        require(msg.send == contractOwner, "Only owner can call this");
+        require(amount <= balance, "Insufficient funds");
 
+        destAddr.transfer(amount);
+        balance -= amount;
+        //emit TransferSent(....)
+    }
 
  
     function getAllApprovalRequests() public view returns (Requests [] memory, ApprovalStruct[][] memory){ 

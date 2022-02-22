@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Component } from 'react'
 import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
-
+import { getEllipsisTxt } from "../helpers/formatters";
 
 
 
@@ -15,17 +15,34 @@ var Styles= {
   table: {
     
     marginTop:'0%',
-    border:'1px solid #ddd',
+    // border:'1px solid #ddd',
     width: '75%',
     tableLayout: 'auto'
   },
   th: {
-
+    paddingLeft:'10px',
+    paddingRight:'10px',
     border:'2px solid #ddd'
   },
-  td: {
 
-    border:'1px solid #ddd',
+  tdId: {
+    color:"#00ff00",
+    fontSize:'20px',
+    // paddingLeft:'10px',
+    // paddingRight:'10px',
+    
+  },
+  tdReason: {
+    color:"#ccc",
+    fontSize:'20px',
+    border:'0.5px dashed #999',
+    paddingLeft:'2px',
+    paddingRight:'2px'
+  },
+  td: {
+    paddingLeft:'5px',
+    paddingRight:'5px'
+    // border:'1px solid #ddd',
     // borderLeft:'1px solid black',
     // borderRight:'1px solid black'
   },
@@ -105,6 +122,7 @@ const Proposals = () => {
 
   });  
 
+  
   const submitNewProposal = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
@@ -348,12 +366,12 @@ useEffect(()=>{
           { 
             updatedProposals.map((obj2, index) => (
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(obj2.attributes.idGuy) }  }>
-                <td style={Styles.td}>{obj2.attributes.idGuy  } </td>
-                <td style={Styles.td}>{obj2.attributes.sendToGuy  }</td>
-                <td style={Styles.td}>{obj2.attributes.reasonGuy  }</td>
+                <td style={Styles.tdId}>{obj2.attributes.idGuy  } </td>
+                <td style={Styles.td}>{getEllipsisTxt(obj2.attributes.sendToGuy, 5)  }</td>
+                <td style={Styles.tdReason}>{obj2.attributes.reasonGuy  }</td>
                 <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
                 <td style={Styles.td}> {calcVotes(obj2.attributes.idGuy)} </td>
-                <td style={Styles.td}> In-Progress </td>
+                <td style={Styles.td}> Open </td>
               </tr>
             ))
           }
@@ -362,13 +380,13 @@ useEffect(()=>{
             data[0].slice(0).reverse().map((obj, index) => (
             
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
-                <td style={Styles.td}>{ parseInt(obj[1]) }</td>               
-                <td style={Styles.td}>{ obj[0] }</td>                                   
-                <td style={Styles.td}>{obj[3]}</td>                  
+                <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
+                <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                   
+                <td style={Styles.tdReason}>{obj[3]}</td>                  
                 <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>              
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
-                <td style={Styles.td}> In-Progress </td>
+                <td style={Styles.td}> Open </td>
               </tr>
              
             
