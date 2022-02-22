@@ -132,15 +132,15 @@ const Treasury = () => {
           <tr>
             <td style={Styles.td}>devETH </td>
             <td style={Styles.td}>{thisContractBalance} </td>
-            <td style={Styles.td}>{tokenPriceFetch.data.formattedUsd}</td>
+            <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
             <td style={Styles.td}>$16.72</td>
           </tr>
           {erc20TokenBalance.map((item, index)=>{   
             return(
               <tr key={index}>
-                <td style={Styles.td}>{item.symbol}</td>
+                <td style={Styles.td}>{item.symbol}</td> 
                 <td style={Styles.td}>{Moralis.Units.FromWei(item.balance)}</td>
-                <td style={Styles.td}>{tokenPriceFetch.data.formattedUsd}</td>
+                <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
                 <td style={Styles.td}>${parseFloat(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice).toFixed(2)}</td>
               </tr>  
             )           

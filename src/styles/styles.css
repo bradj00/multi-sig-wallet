@@ -13,7 +13,7 @@ ul {
   .menu li {
     margin-top: 20px;
     font-family: sans-serif;
-    font-size: 2em;
+    font-size: 1.75em;
     line-height: 40px;
     height: 40px;
 
@@ -21,7 +21,7 @@ ul {
   a {
     color: #ddd;
     text-decoration: none;
-    filter: grayscale(70%);
+    filter: grayscale(50%);
   }
   a:hover{
     color: orange;
@@ -34,3 +34,6 @@ ul {
   .navLink:hover {
     color :"#00ff00";
   }
+
+
+  

@@ -19,8 +19,7 @@ import Deposits from './components/Depsoits';
 import Admin from './components/Admin';
 import Treasury from './components/Treasury';
 import AddressBook from './components/AddressBook';
-
-
+import BackdropFilter from "react-backdrop-filter";
 
 
 const Styles={
@@ -39,32 +38,36 @@ const Styles={
     display:'flex',
     width:'100%',
     height:'5%',
-    backgroundColor:'#555',
+    background: '#3B3E44',
+    background: 'linear-gradient(to top, #18191C, #232528)',
   },
   leftNavBar:{
     display:'flex',
     position:'absolute',
     left:'0%',
     top:'0%',
-    height: '100%',
+    height: '98.5%',
+    marginTop:'0.5%',
     width:'15%',
     justifyContent:'center',
-    backgroundColor:'#777'
+    background: '#3B3E44',
+    background: 'linear-gradient(to top, #18191C, #232528)',
   },
   contractBalance:{
 
   },
   content:{
-    background: 'rgb(0,0,0)',
-    background: 'linear-gradient(185deg, rgba(51,51,51,0.7595413165266106) 0%, rgba(10,10,10,0.6418942577030813) 99%, rgba(24,24,24,0.40379901960784315) 100%)',
-    marginTop:'1%',
+    
+    background: '#3B3E44',
+    background: 'linear-gradient(to top, #18191C, #232528)',
+    marginTop:'0.5%',
     position:'absolute',
     top:'0%',
-    right:'0.5%',
+    right:'0.3%',
     border: '0px solid #00ff00',
-    width: '84%',
-    height:'100%',
-
+    width: '84.5%',
+    height:'98.5%',
+    
 
   }
 }
@@ -90,7 +93,8 @@ function App() {
       <div style={Styles.leftNavBar}>
         <LeftPanel />
       </div>
-      <div style={Styles.content}>
+  
+      <div className="content" style={Styles.content} >
         <Routes>
             <Route exact path="/" element={<Proposals/>} />
 
@@ -103,6 +107,7 @@ function App() {
             <Route path='/AddressBook' element={<AddressBook/>} />
         </Routes>
       </div>
+
     </div>
     </Router>
 

@@ -22,7 +22,7 @@ var Styles= {
   th: {
     paddingLeft:'10px',
     paddingRight:'10px',
-    border:'2px solid #ddd'
+    border:'2px solid #444'
   },
 
   tdId: {
@@ -33,9 +33,9 @@ var Styles= {
     
   },
   tdReason: {
-    color:"#ccc",
-    fontSize:'20px',
-    border:'0.5px dashed #999',
+    color:"#eee",
+    fontSize:'18px',
+    border:'0.5px dashed #444',
     paddingLeft:'2px',
     paddingRight:'2px'
   },
@@ -59,10 +59,12 @@ var Styles= {
     position:'absolute',
     width: '23%',
     paddingBottom:'2%',
-    right:'0%',
+    right:'0.5%',
     top:'17%',
     border:'1px solid #ddd',
-    backgroundColor:'#555'
+    backgroundColor:'#3B3E44',
+    color:'#fff',
+    
     
   }
 }
@@ -455,7 +457,7 @@ useEffect(()=>{
           <div>
             <form onSubmit={handleSubmit}>
 
-                <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
+                <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
                 <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;
                 <select style={{backgroundColor:'#fff',}}>
                   <option value="ETH"> ETH</option>
