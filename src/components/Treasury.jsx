@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useNativeBalance, useERC20Balances, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
+import { useTokenPrice , useNativeBalance, useERC20Balances, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 
 
@@ -26,6 +26,11 @@ const Styles = {
 
 const Treasury = () => {
   const {Moralis} = useMoralis();
+
+  // const { fetchTokenPrice, data: formattedData, error, isLoading, isFetching } = useTokenPrice({ address: "0x1f9840...1f984", chain: "eth" });
+  const tokenPriceFetch = useTokenPrice({ address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", chain: "eth" });
+  const [tokenPriceArray, setTokenPriceArray] = useState([])
+
 
   const getContractNativeBalanceMoralis = useNativeBalance( 
     {
@@ -67,11 +72,19 @@ const Treasury = () => {
     getContractBalanceCall();
     getContractNativeBalanceMoralis.getBalances();
     getContractERC20BalanceMoralis.fetchERC20Balances();
+    tokenPriceFetch.fetchTokenPrice();
     // console.log('---___---');
     // console.log(getContractNativeBalanceMoralis);
   },500);
 
  },[]);
+
+ useEffect(()=>{
+   if(tokenPriceFetch.data != null){
+    console.log('token price data:',tokenPriceFetch.data);
+   }
+  },[tokenPriceFetch.data]);
+
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
  useEffect(()=>{
@@ -119,14 +132,16 @@ const Treasury = () => {
           <tr>
             <td style={Styles.td}>devETH </td>
             <td style={Styles.td}>{thisContractBalance} </td>
-            <td style={Styles.td}>$1.75</td>
+            <td style={Styles.td}>{tokenPriceFetch.data.formattedUsd}</td>
             <td style={Styles.td}>$16.72</td>
           </tr>
-          {erc20TokenBalance.map((item)=>{   
+          {erc20TokenBalance.map((item, index)=>{   
             return(
-              <tr>
-                <td>{item.symbol}</td>
-                <td>{Moralis.Units.FromWei(item.balance)}</td>
+              <tr key={index}>
+                <td style={Styles.td}>{item.symbol}</td>
+                <td style={Styles.td}>{Moralis.Units.FromWei(item.balance)}</td>
+                <td style={Styles.td}>{tokenPriceFetch.data.formattedUsd}</td>
+                <td style={Styles.td}>${parseFloat(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice).toFixed(2)}</td>
               </tr>  
             )           
           })}
