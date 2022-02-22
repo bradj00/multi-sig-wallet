@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
+import { useNativeBalance, useERC20Balances, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 
 
@@ -25,8 +25,25 @@ const Styles = {
 }
 
 const Treasury = () => {
-  const [thisContractBalance, setThisContractBalance] = useState('loading..');
+  const {Moralis} = useMoralis();
 
+  const getContractNativeBalanceMoralis = useNativeBalance( 
+    {
+      address: contractAddress,
+      chain:'mumbai',
+      //to_block:
+    }
+  );
+  const getContractERC20BalanceMoralis = useERC20Balances( 
+    {
+      address: contractAddress,
+      chain:'mumbai',
+      //to_block:
+    }
+  );
+
+  const [erc20TokenBalance, setErc20TokenBalance] = useState([]);
+  const [thisContractBalance, setThisContractBalance] = useState('loading..');
   const submitDeposit = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
@@ -46,19 +63,45 @@ const Treasury = () => {
     console.log('fetching contract balance..');
   }
  useEffect(()=>{
-  setTimeout(function(){getContractBalanceCall();},500);
+  setTimeout(function(){
+    getContractBalanceCall();
+    getContractNativeBalanceMoralis.getBalances();
+    getContractERC20BalanceMoralis.fetchERC20Balances();
+    // console.log('---___---');
+    // console.log(getContractNativeBalanceMoralis);
+  },500);
 
  },[]);
+///////////////////////////////////////////////////
+///////////////////////////////////////////////////
+ useEffect(()=>{
+  // if (getContractNativeBalanceMoralis.data != null){
+  //   console.log('Native token balance:');
+  //   console.log(getContractNativeBalanceMoralis.data.balance);
+  // }
+ },[getContractNativeBalanceMoralis.data]);
+
+ useEffect(()=>{
+  console.log('****',erc20TokenBalance);
+ },[erc20TokenBalance]);
+ 
+ useEffect(()=>{
+  if (getContractERC20BalanceMoralis.data != null){
+    console.log('ERC20 token balance:');
+    console.log(getContractERC20BalanceMoralis.data);
+    setErc20TokenBalance(getContractERC20BalanceMoralis.data);
+  }
+ },[getContractERC20BalanceMoralis.data]);
+///////////////////////////////////////////////////
+///////////////////////////////////////////////////
 
  useEffect(()=>{
    if (getContractBalance.data != null){
     let decimalContractBalance = parseInt(getContractBalance.data._hex, 16);
-    console.log('got contract balance data back: ');
-    console.log(decimalContractBalance);
-    console.log(decimalContractBalance / (1000000000000000000));
     setThisContractBalance(decimalContractBalance / (1000000000000000000));
    }
  },[getContractBalance.data]);
+
 
   return (
     <div>
@@ -74,12 +117,24 @@ const Treasury = () => {
             <th style={Styles.th}><strong>Estimated Value</strong> </th>
           </tr>
           <tr>
-            <th style={Styles.td}>devETH </th>
-            <th style={Styles.td}>{thisContractBalance} </th>
-            <th style={Styles.td}>$1.75</th>
-            <th style={Styles.td}>$16.72</th>
+            <td style={Styles.td}>devETH </td>
+            <td style={Styles.td}>{thisContractBalance} </td>
+            <td style={Styles.td}>$1.75</td>
+            <td style={Styles.td}>$16.72</td>
           </tr>
+          {erc20TokenBalance.map((item)=>{   
+            return(
+              <tr>
+                <td>{item.symbol}</td>
+                <td>{Moralis.Units.FromWei(item.balance)}</td>
+              </tr>  
+            )           
+          })}
 
+          {/* <tr>
+            <td>{JSON.stringify(erc20TokenBalance[1].symbol)}</td>
+            <td>{JSON.stringify(erc20TokenBalance[1].balance)}</td>
+          </tr> */}
           </tbody>
         </table>
         </div>
