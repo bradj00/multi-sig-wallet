@@ -2,7 +2,8 @@ import React, { useEffect, useState, Component } from 'react'
 import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 import { getEllipsisTxt } from "../helpers/formatters";
-
+import ContractOwnerSendButton from './ContractOwnerSendButton';
+ 
 
 
 
@@ -26,7 +27,7 @@ var Styles= {
   },
 
   tdId: {
-    color:"#00ff00",
+    color:"#ddd",
     fontSize:'20px',
     // paddingLeft:'10px',
     // paddingRight:'10px',
@@ -72,11 +73,14 @@ var Styles= {
 const Proposals = () => {
 
   
-    
+  const {Moralis} = useMoralis();
   const [propsalInfoDivDisplay, setPropsalInfoDivDisplay] = useState('0%');
   const [voteCount, setVoteCount] = useState([]);
+  const [contractOwner, setContractOwner] = useState();
+  const [isAccountContractOwner, setIsAccountContractOwner] = useState(false);
 
 
+  const [sendAmountInWei, setSendAmountInWei] = useState('');
   const [sendAmount, setSendAmount] = useState('');
   const [receipient, setReceipient] = useState('');
   const [textArea, setTextArea] = useState('');
@@ -125,12 +129,19 @@ const Proposals = () => {
   });  
 
   
+  const getContractOwner = useWeb3ExecuteFunction({ 
+    chain:'mumbai',
+    abi: contractABI,
+    contractAddress: contractAddress,
+    functionName: "getContractOwner",
+  }); 
+
   const submitNewProposal = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
     contractAddress: contractAddress,
     functionName: "newApproval",
-    params: {_sendTo: receipient,  _reason: textArea, _amount: sendAmount}
+    params: {_sendTo: receipient,  _reason: textArea, _amount: sendAmountInWei}
   }); 
   const getProposalApprovals = useWeb3ExecuteFunction({ 
     chain:'mumbai',
@@ -147,11 +158,29 @@ const Proposals = () => {
     params: {_requestId: selectedRequestId, thisApproval: selectedItemStateId}
   }); 
 
-  
+  function getContractOwnerFunc(){
+    console.log('fetching owner from contract...');
+    getContractOwner.fetch();
+  }
+  useEffect(()=>{
+    if (getContractOwner.data != undefined){
+      setContractOwner(getContractOwner.data);
+      console.log('contract owner is:'+contractOwner)   
+    }
+  },[getContractOwner.data]);
+
+  useEffect(()=>{
+    if ((contractOwner) && (account) &&(contractOwner.toUpperCase() == account.toUpperCase()) ){
+      setIsAccountContractOwner(true);
+    }else {
+      // setIsAccountContractOwner(false);
+    } 
+  },[contractOwner])
+
   useEffect(()=>{
     fetch();
     getProposalInfo(-1);
-
+    getContractOwnerFunc();
   },[])
 
   useEffect(() => {
@@ -277,7 +306,7 @@ function colorApprovalItem(param){
   }
 }
 
-useEffect(()=>{
+useEffect(()=>{ 
   // console.log('votecount is:');
   // console.log(voteCount);
 
@@ -288,6 +317,44 @@ useEffect(()=>{
 
 },[account])
 
+function showNewProposalDiv(){
+
+  if (account && contractOwner && (account.toUpperCase() == contractOwner.toUpperCase()) ){ 
+    return(  
+      <>
+      Signed-in account is the contract owner !
+      </>
+    )
+  }
+  else{
+    return(
+      <div style={Styles.newProposalDiv}>
+        <div style={{fontSize:'20px', width:'100%', marginBottom:'10%'}}>
+          New Proposal
+        </div>
+        <div>
+          <form onSubmit={handleSubmit}>
+
+              <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
+              <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;
+              <select style={{backgroundColor:'#fff',}}>
+                <option value="ETH"> ETH</option>
+                <option value="USDC">USDC</option>
+                <option value="DOGE">DOGE</option>
+              </select><br></br><br></br>
+              <textarea value={textArea} onChange={(e) => setTextArea(e.target.value)} placeholder='Enter Reason...'style={{backgroundColor:'#333', width:'80%', height:'200px'}}>
+              </textarea>
+            <br></br> <br></br>
+          <input type="submit" value="Submit" />
+          </form>
+        </div>
+
+      </div>
+
+    )
+  }
+}
+
   function statusFunction(signatureStatus, custodian){
     signatureStatus = parseInt(signatureStatus,16);
     let selectedItem = 'ugga';
@@ -297,7 +364,8 @@ useEffect(()=>{
       case 0: selectedItem = 'not seen'; notSelected1='approved'; notSelected2='rejected';break;
       case 1: selectedItem = 'approved'; notSelected1='not seen'; notSelected2='rejected';break;
       case 2: selectedItem = 'rejected'; notSelected1='approved'; notSelected2='not seen';break;
-    } 
+    }
+     
 
 
     // console.log(signatureStatus, custodian);
@@ -326,6 +394,11 @@ useEffect(()=>{
 
   }
   useEffect(()=>{
+    if (sendAmount != ''){
+    setSendAmountInWei(Moralis.Units.ETH(sendAmount));
+    }
+  },[sendAmount])
+  useEffect(()=>{
     // console.log('selectedItemState:');
     // console.log(selectedItemState);
     
@@ -343,6 +416,18 @@ useEffect(()=>{
     }
   },[selectedItemState])
 
+function proposalStatusReturn(status){
+  switch(status){
+    case 1:
+      return(<div style={{color:'#00ff00'}}>open</div>);
+      break;
+    case 2:
+      return(<div style={{color:'#aa0000'}}>closed</div>);
+      break;
+
+  }
+}
+  
   if (data && data[0] && data != null && !isLoading && !isFetching){
     // console.log('GOT SOME DATA: ');
     // console.log(data);
@@ -366,31 +451,36 @@ useEffect(()=>{
               <th style={Styles.th}>Status </th>
             </tr>
           { 
-            updatedProposals.map((obj2, index) => (
+            updatedProposals.map((obj2, index) => ( 
+              
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(obj2.attributes.idGuy) }  }>
                 <td style={Styles.tdId}>{obj2.attributes.idGuy  } </td>
                 <td style={Styles.td}>{getEllipsisTxt(obj2.attributes.sendToGuy, 5)  }</td>
                 <td style={Styles.tdReason}>{obj2.attributes.reasonGuy  }</td>
-                <td style={Styles.td}>{obj2.attributes.amountGuy }</td>
+                <td style={Styles.td}>{Moralis.Units.FromWei(obj2.attributes.amountGuy) }</td>
                 <td style={Styles.td}> {calcVotes(obj2.attributes.idGuy)} </td>
-                <td style={Styles.td}> Open </td>
+                <td style={Styles.td}> {proposalStatusReturn(obj2.attributes.idGuy)} </td>
+                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={obj2.attributes.idGuy}/> </td> : <td></td>}
               </tr>
-            ))
+              
+            ))  
           }
 
             {
             data[0].slice(0).reverse().map((obj, index) => (
-            
+              <>
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
                 <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                   
                 <td style={Styles.tdReason}>{obj[3]}</td>                  
-                <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>              
+                <td style={Styles.td}>{ Moralis.Units.FromWei(parseInt(obj[2]._hex)) }</td>              
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
-                <td style={Styles.td}> Open </td>
+                <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td>
+                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={parseInt(obj[1])} /> </td> : <td></td>}
               </tr>
              
+             </>
             
             ))
             
@@ -449,29 +539,8 @@ useEffect(()=>{
           </tbody>
         </table>
         </div>
+        {showNewProposalDiv()}
         
-        <div style={Styles.newProposalDiv}>
-          <div style={{fontSize:'20px', width:'100%', marginBottom:'10%'}}>
-            New Proposal
-          </div>
-          <div>
-            <form onSubmit={handleSubmit}>
-
-                <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
-                <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;
-                <select style={{backgroundColor:'#fff',}}>
-                  <option value="ETH"> ETH</option>
-                  <option value="USDC">USDC</option>
-                  <option value="DOGE">DOGE</option>
-                </select><br></br><br></br>
-                <textarea value={textArea} onChange={(e) => setTextArea(e.target.value)} placeholder='Enter Reason...'style={{backgroundColor:'#333', width:'80%', height:'200px'}}>
-                </textarea>
-              <br></br> <br></br>
-             <input type="submit" value="Submit" />
-            </form>
-          </div>
-
-        </div>
 
       </div>
     );

@@ -1,4 +1,4 @@
-export const contractAddress = '0xf2d73CdC88494bE097724584088306BDd510c4bd';
+export const contractAddress = '0x3568bc79D5bf382479334b588a5c0bDC4F62A6eA';
  
 
 export const contractABI =[
@@ -44,6 +44,25 @@ export const contractABI =[
 			}
 		],
 		"name": "Deposit",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "requestId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "didSucceed",
+				"type": "bool"
+			}
+		],
+		"name": "Payment",
 		"type": "event"
 	},
 	{
@@ -145,6 +164,25 @@ export const contractABI =[
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_requestId",
+				"type": "uint256"
+			}
+		],
+		"name": "calculateApprovalCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "totalApproval",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "depositEth",
 		"outputs": [],
@@ -171,7 +209,7 @@ export const contractABI =[
 			{
 				"components": [
 					{
-						"internalType": "address",
+						"internalType": "address payable",
 						"name": "receipient",
 						"type": "address"
 					},
@@ -189,6 +227,11 @@ export const contractABI =[
 						"internalType": "string",
 						"name": "_reason",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "status",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct MultiSig.Requests[]",
@@ -311,7 +354,7 @@ export const contractABI =[
 	{
 		"inputs": [
 			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "_sendTo",
 				"type": "address"
 			},
@@ -327,6 +370,32 @@ export const contractABI =[
 			}
 		],
 		"name": "newApproval",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "sendTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "thresholdPercentage",
+				"type": "uint256"
+			}
+		],
+		"name": "setVoteApprovalThreshold",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

@@ -23,7 +23,11 @@ const Styles = {
 
 
 const Admin = () => {
+    const {Moralis} = useMoralis();
     const {account} = useChain();
+    const [stateId, setStateId] = useState(0); //hard coded ID for admin sendToken function run
+
+
     const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({ 
         chain:'mumbai',
         abi: contractABI,
@@ -42,8 +46,17 @@ const Admin = () => {
         contractAddress: contractAddress,
         functionName: "getCustodians",
     }); 
+    const sendProposalTokens = useWeb3ExecuteFunction({ 
+        chain:'mumbai',
+        abi: contractABI,
+        contractAddress: contractAddress,
+        functionName: "sendTokens",
+        params:{
+            id: stateId, 
+        }
+    }); 
 
-
+ 
     useEffect(()=>{
 
     },[CustodiansFromContract]);
@@ -55,7 +68,11 @@ const Admin = () => {
             CustodiansFromContract.fetch();
         }
     },[account]);
-    
+
+function sendTokenTransfer() {
+    console.log('calling sendTokens(id: 0');
+    sendProposalTokens.fetch();
+}
     
 function initializeContract(){
     console.log('initializing contract..');
@@ -64,7 +81,36 @@ function initializeContract(){
 
     const [hasContractBeenRun, setHasContractBeenRun] = useState(false);
     
-
+    function initializeReturner(){
+        if (hasContractBeenRun){
+            return(
+                <>
+                    <span style={{color:'#00ff00'}}>initialized</span><br></br>
+                    <span style={{display:"flex", alignContent:'left'}}>
+                        
+                        Vote "pass" threshold <span style={{color:'#00ff00'}}>&nbsp; &nbsp; 2 / 4</span>
+                    </span>
+                </>
+            )
+        }else {
+            return(
+            <>
+                <span style={{color:'#ff0044'}}>uninitialized</span>
+                <span>
+                    <form>
+                    Vote "pass" threshold &nbsp;
+                    <select style={{backgroundColor:'#ff0044',}}>
+                        <option value="ETH"> 1</option>
+                        <option value="ETH"> 2</option>
+                        <option value="ETH"> 3</option>
+                        <option value="ETH"> 4</option>
+                    </select>
+                    </form>
+                </span>
+            </>
+            )
+        }
+    }
 
     if (data && !isLoading && !isFetching && CustodiansFromContract.data && !CustodiansFromContract.isLoading && !CustodiansFromContract.isFetching){
         if ( account.toUpperCase() == data.toUpperCase() ){
@@ -76,14 +122,16 @@ function initializeContract(){
            
             return (
                 <div style={{}}>
-                    Admin Mode: Activated<br></br>
+<br></br>           Admin Mode: Activated<br></br>
 
-                    <div style={{display:'flex', marginLeft:'10%', marginTop:'4%', }}>
+                    <div style={{display:'flex', alignContent:'left', marginLeft:'10%', marginTop:'4%', }}>
                         <button style={{}} onClick={()=>{initializeContract()}}>Initialize Contract</button>
-                        <div style={{marginLeft:'3%'}}>{hasContractBeenRun ? <span style={{color:'#00ff00'}}>initialized</span>    : <span style={{color:'#ff0000'}}>uninitialized</span> }</div>
+                        <div style={{marginLeft:'3%'}}> Contract: {initializeReturner()}</div>
                     </div>
 
                     <div>
+                    <button onClick={()=>{sendTokenTransfer()}}>Attempt transfer</button>
+                
                     <table style={Styles.table}>
                         <tbody>
                             <tr>

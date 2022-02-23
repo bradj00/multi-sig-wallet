@@ -73,6 +73,7 @@ const Treasury = () => {
     getContractNativeBalanceMoralis.getBalances();
     getContractERC20BalanceMoralis.fetchERC20Balances();
     tokenPriceFetch.fetchTokenPrice();
+    
     // console.log('---___---');
     // console.log(getContractNativeBalanceMoralis);
   },500);
@@ -118,7 +119,7 @@ const Treasury = () => {
 
   return (
     <div>
-        Treasury will be value of all token balances. Maybe Moralis can help with pricing<br></br>
+        <br></br>
     <button onClick={()=>{submitDeposit.fetch()}}>Make Deposit</button>
         <div style={{position:'absolute', left:'3%', width:'95%'}}>
         <table style={Styles.table}>
@@ -133,7 +134,7 @@ const Treasury = () => {
             <td style={Styles.td}>devETH </td>
             <td style={Styles.td}>{thisContractBalance} </td>
             <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
-            <td style={Styles.td}>$16.72</td>
+            <td style={Styles.td}>${tokenPriceFetch.data ? parseFloat(thisContractBalance * tokenPriceFetch.data.usdPrice).toFixed(2) : 0}</td>
           </tr>
           {erc20TokenBalance.map((item, index)=>{   
             return(
@@ -143,7 +144,7 @@ const Treasury = () => {
                 <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
                 <td style={Styles.td}>${parseFloat(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice).toFixed(2)}</td>
               </tr>  
-            )           
+              )           
           })}
 
           {/* <tr>

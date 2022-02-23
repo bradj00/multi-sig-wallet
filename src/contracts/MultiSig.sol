@@ -2,7 +2,7 @@ pragma solidity 0.8.12;
 pragma abicoder v2;
 
 contract MultiSig {
-    address contractOwner = 0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17;
+    address contractOwner = 0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1;
     address[] public approvers = [
         0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,
         0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,
@@ -12,9 +12,9 @@ contract MultiSig {
     event Deposit(address indexed fromThisGuy, uint valueGuy);
     event alertNewApproval(address indexed fromGuy, address sendToGuy, string  reasonGuy, uint amountGuy, uint idGuy);
     event Approval(address indexed signer, uint requestId, uint approvalId);
+    
 
-
-    uint thresholdForApprovalToPass;
+    uint voteApprovalThreshold;
     uint256 contractBalance = address(this).balance;
 
 
@@ -57,8 +57,6 @@ contract MultiSig {
     //returns( uint[] memory)
     //approved[_requestId]
     mapping(uint => mapping(address=> uint)) public approvedStatus;
-   
-    function deposit() public payable {}
 
  
     function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [] memory)  {
@@ -71,14 +69,14 @@ contract MultiSig {
     }
  
 
-    function withdraw(uint amount, address payable destAddr) public {
-        require(msg.send == contractOwner, "Only owner can call this");
-        require(amount <= balance, "Insufficient funds");
+    // function withdraw(uint amount, address payable destAddr) public {
+    //     require(msg.send == contractOwner, "Only owner can call this");
+    //     require(amount <= balance, "Insufficient funds");
 
-        destAddr.transfer(amount);
-        balance -= amount;
-        //emit TransferSent(....)
-    }
+    //     destAddr.transfer(amount);
+    //     balance -= amount;
+    //     //emit TransferSent(....)
+    // }
 
  
     function getAllApprovalRequests() public view returns (Requests [] memory, ApprovalStruct[][] memory){ 
@@ -88,8 +86,6 @@ contract MultiSig {
         }
         return(transferRequests, tempApprovalStatusArray);
     }
-//0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,0,0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,0,0x813426c035f2658E50bFAEeBf3AAab073D956F31,0,0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1,0
-
 
     function newApproval(address _sendTo, string memory _reason, uint _amount) public {
         Requests memory newRequest = Requests(_sendTo, transferRequests.length, _amount, _reason);
@@ -97,16 +93,14 @@ contract MultiSig {
         emit alertNewApproval(msg.sender, _sendTo, _reason, _amount, transferRequests.length);
     }
 
-
-
-
     function depositEth() public payable {
         contractBalance += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
 
     function getContractBalance() public view returns(uint){
-        return contractBalance;
+        // return contractBalance;
+        return address(this).balance;
     }
 
 
