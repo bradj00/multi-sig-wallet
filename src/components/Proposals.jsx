@@ -205,15 +205,15 @@ const Proposals = () => {
     submitNewProposal.fetch();
   }
 
-  function getProposalInfo(id){
-    console.log('id: '+id);
+  function getProposalInfo(id){ 
+    // console.log('id: '+id);
     setSelectedRequestId(id);
     getProposalApprovals.fetch();
 
 
   }
 
-  function submitProposalSignature(){
+  function submitProposalSignature(){ 
     let approvalId = -1;
     switch (selectedItemState){
       case 'not seen': 
@@ -227,12 +227,18 @@ const Proposals = () => {
         break;
 
     }
-    setSelectedItemStateId(approvalId);
+    setSelectedItemStateId(approvalId); 
     signProposal.fetch();
   }
 
 
 
+
+useEffect(()=>{
+  if (signProposal.error != null){
+    console.log('proposal ERROR: ',signProposal.error)
+  }
+},[signProposal.error]);
 
 useEffect(()=>{
   // console.log('got data back for id: '+selectedRequestId);
@@ -312,16 +318,16 @@ useEffect(()=>{
 
 },[account])
 
-function showNewProposalDiv(){
+function showNewProposalDiv(){ 
 
-  if (account && contractOwner && (account.toUpperCase() == contractOwner.toUpperCase()) ){ 
-    return(  
-      <>
-      Signed-in account is the contract owner !
-      </>
-    )
-  }
-  else{
+  // if (account && contractOwner && (account.toUpperCase() == contractOwner.toUpperCase()) ){ 
+  //   return(  
+  //     <>
+  //     Signed-in account is the contract owner !
+  //     </>
+  //   )
+  // }
+  // else{
     return(
       <div style={Styles.newProposalDiv}>
         <div style={{fontSize:'20px', width:'100%', marginBottom:'10%'}}>
@@ -347,7 +353,7 @@ function showNewProposalDiv(){
       </div>
 
     )
-  }
+  // }
 }
 
   function statusFunction(signatureStatus, custodian){
@@ -443,10 +449,10 @@ function proposalStatusReturn(status){
               <th style={Styles.th}>Reason </th>
               <th style={Styles.th}>Amount </th>
               <th style={Styles.th}>Votes </th>
-              <th style={Styles.th}>Status </th>
+              <th style={Styles.th}>Status </th> 
             </tr>
           { 
-            updatedProposals.map((obj2, index) => (  
+            updatedProposals.map((obj2, index) => (   
               
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(obj2.attributes.idGuy) }  }>
                 <td style={Styles.tdId}>{obj2.attributes.idGuy  } </td>
@@ -455,29 +461,31 @@ function proposalStatusReturn(status){
                 <td style={Styles.td}>{Moralis.Units.FromWei(obj2.attributes.amountGuy) }</td>
                 <td style={Styles.td}> {calcVotes(obj2.attributes.idGuy)} </td>
                 <td style={Styles.td}> {proposalStatusReturn(obj2.attributes.idGuy)} </td>
-                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={obj2.attributes.idGuy}/> </td> : <td></td>}
+                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: obj2.attributes.idGuy, status: proposalStatusReturn(obj2.attributes.idGuy)}}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>}
               </tr>
               
-            ))  
-          }
+            ))    
+          } 
 
             {
-            data[0].slice(0).reverse().map((obj, index) => (
-              <>
+            data[0].slice(0).reverse().map((obj, index) => { 
+              let proposalStatus = parseInt(obj[4]._hex,16)
+              let proposalId = parseInt(obj[1]);
+              return(
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
-                <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                   
+                <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
                 <td style={Styles.tdReason}>{obj[3]}</td>                  
-                <td style={Styles.td}>{ Moralis.Units.FromWei(parseInt(obj[2]._hex)) }</td>              
+                <td style={Styles.td}>{ Moralis.Units.FromWei(parseInt(obj[2]._hex)) }</td>               
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
                 <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td>
-                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={parseInt(obj[1])} /> </td> : <td></td>}
+                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: proposalId, status: proposalStatus }}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>}
               </tr>
+              )
              
-             </>
             
-            ))
+              })
             
           }
               
