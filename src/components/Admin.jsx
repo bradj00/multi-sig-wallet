@@ -46,15 +46,6 @@ const Admin = () => {
         contractAddress: contractAddress,
         functionName: "getCustodians",
     }); 
-    const sendProposalTokens = useWeb3ExecuteFunction({ 
-        chain:'mumbai',
-        abi: contractABI,
-        contractAddress: contractAddress,
-        functionName: "sendTokens",
-        params:{
-            id: stateId, 
-        }
-    }); 
 
  
     useEffect(()=>{
@@ -69,11 +60,7 @@ const Admin = () => {
         }
     },[account]);
 
-function sendTokenTransfer() {
-    console.log('calling sendTokens(id: 0');
-    sendProposalTokens.fetch();
-}
-    
+  
 function initializeContract(){
     console.log('initializing contract..');
     firstRunContract.fetch();
@@ -130,7 +117,7 @@ function initializeContract(){
                     </div>
 
                     <div>
-                    <button onClick={()=>{sendTokenTransfer()}}>Attempt transfer</button>
+                    
                 
                     <table style={Styles.table}>
                         <tbody>

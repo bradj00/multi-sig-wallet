@@ -1,4 +1,4 @@
-export const contractAddress = '0xc3760DAE2B84E472c51963797D24044f00bf076f';
+export const contractAddress = '0xf3fBdD65C620c9a3Ad6d7557A402503945FD1797';
  
 
 export const contractABI =[
@@ -60,6 +60,12 @@ export const contractABI =[
 				"internalType": "bool",
 				"name": "didSucceed",
 				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
 			}
 		],
 		"name": "Payment",

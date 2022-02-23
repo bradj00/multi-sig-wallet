@@ -2,21 +2,28 @@ pragma solidity 0.8.12;
 pragma abicoder v2;
 
 contract MultiSig {
-    address contractOwner = 0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1;
+    address contractOwner = 0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749;
     address[] public approvers = [
         0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,
         0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,
         0x813426c035f2658E50bFAEeBf3AAab073D956F31,
-        0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1
+        0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1,
+        0x89Ca0E3c4b93D9Ee8b1C1ab89266F1f6bA11Aa22
     ];
     event Deposit(address indexed fromThisGuy, uint valueGuy);
     event alertNewApproval(address indexed fromGuy, address sendToGuy, string  reasonGuy, uint amountGuy, uint idGuy);
     event Approval(address indexed signer, uint requestId, uint approvalId);
-    
+    event Payment(uint requestId, bool didSucceed);
 
-    uint voteApprovalThreshold;
+
+    bool contractHasLaunched = false;
+    uint voteApprovalThreshold = 2;
     uint256 contractBalance = address(this).balance;
 
+    function setVoteApprovalThreshold(uint thresholdPercentage) public {
+        require(msg.sender == contractOwner, "Only owner can call this");
+        voteApprovalThreshold = thresholdPercentage;
+    }
 
     struct Custodian {
         address thisAddress;
@@ -29,22 +36,30 @@ contract MultiSig {
     }
     
     function firstRun() public returns(string memory){
-        if (msg.sender != contractOwner){
-            return('only contract owner can run this function.');
-        }else {
-        for (uint256 i = 0; i < approvers.length; i++) {
-            Custodian memory newRequest = Custodian(approvers[i], 1);
-            custodians.push(newRequest);
+        if(contractHasLaunched == false){
+            if (msg.sender != contractOwner){
+                return('only contract owner can run this function.');
+            }
+            else {
+                for (uint256 i = 0; i < approvers.length; i++) {
+                    Custodian memory newRequest = Custodian(approvers[i], 1);
+                    custodians.push(newRequest);
+                }
+                contractHasLaunched = true;
+                return('set approvers, vote weight, and voteApprovalThreshold!');
+            }
         }
-        return('succeeded in setting approvers and vote weight!');
+        else{
+            return('contract has already been launched.');
         }
     }
 
     struct Requests {
-        address receipient;
+        address payable receipient;
         uint id;
         uint amount;
         string _reason;
+        uint status;
         
     }
     Requests[] transferRequests;
@@ -54,29 +69,46 @@ contract MultiSig {
         address custodianMember;
         uint status; //0 untouched. 1 approved. 2 rejected
     }
-    //returns( uint[] memory)
-    //approved[_requestId]
-    mapping(uint => mapping(address=> uint)) public approvedStatus;
 
+
+    mapping(uint => mapping(address=> uint)) public approvedStatus;
  
     function getApprovalStatus(uint _requestId) public view returns(ApprovalStruct [] memory)  {
         ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
+
         for (uint i=0; i < approvers.length; i++) {
             ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
             custodianApprovals[i] = newCustodianApprovals;
         }
         return(custodianApprovals);
     }
- 
 
-    // function withdraw(uint amount, address payable destAddr) public {
-    //     require(msg.send == contractOwner, "Only owner can call this");
-    //     require(amount <= balance, "Insufficient funds");
+    function calculateApprovalCount(uint _requestId) public view returns(uint totalApproval) {
+        ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
+        uint totalApproval1 = 0;
 
-    //     destAddr.transfer(amount);
-    //     balance -= amount;
-    //     //emit TransferSent(....)
-    // }
+        for (uint i=0; i < approvers.length; i++) {
+            ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
+            custodianApprovals[i] = newCustodianApprovals;
+            if (approvedStatus[ _requestId ][ approvers[i] ] != 0){
+                totalApproval1 = totalApproval1+1;
+            }
+        }
+        return(totalApproval1);
+    }
+
+
+    function sendTokens(uint id) public {
+        require(msg.sender == contractOwner, "Only owner can call this");
+        
+        uint tallyVotes = calculateApprovalCount(id);
+        require(tallyVotes >= voteApprovalThreshold, "not enough votes to take action.");
+        require(transferRequests[id].status != 2, "proposal has already been executed.");
+        
+        transferRequests[id].receipient.transfer(transferRequests[id].amount); //only works for native coin (ETH/MATIC not erc20..yet)
+        transferRequests[id].status = 2;
+        emit Payment(id, true);
+    }
 
  
     function getAllApprovalRequests() public view returns (Requests [] memory, ApprovalStruct[][] memory){ 
@@ -87,8 +119,8 @@ contract MultiSig {
         return(transferRequests, tempApprovalStatusArray);
     }
 
-    function newApproval(address _sendTo, string memory _reason, uint _amount) public {
-        Requests memory newRequest = Requests(_sendTo, transferRequests.length, _amount, _reason);
+    function newApproval(address payable _sendTo, string memory _reason, uint _amount) public {
+        Requests memory newRequest = Requests(_sendTo, transferRequests.length, _amount, _reason, 1); //1 is 'open' status
         transferRequests.push(newRequest);
         emit alertNewApproval(msg.sender, _sendTo, _reason, _amount, transferRequests.length);
     }

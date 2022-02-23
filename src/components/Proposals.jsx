@@ -77,7 +77,7 @@ const Proposals = () => {
   const [propsalInfoDivDisplay, setPropsalInfoDivDisplay] = useState('0%');
   const [voteCount, setVoteCount] = useState([]);
   const [contractOwner, setContractOwner] = useState();
-  const [isAccountContractOwner, setIsAccountContractOwner] = useState(false);
+  const [isAccountContractOwner, setIsAccountContractOwner] = useState(false); 
 
 
   const [sendAmountInWei, setSendAmountInWei] = useState('');
@@ -86,7 +86,7 @@ const Proposals = () => {
   const [textArea, setTextArea] = useState('');
 
   const [updatedProposalsState, setUpdatedProposalsState] = useState(['0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749',false,'0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d',false,'0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17',false]);
-  const [selectedRequestId, setSelectedRequestId] = useState(-1);
+  const [selectedRequestId, setSelectedRequestId] = useState(-1); 
 
   const [updatedProposals, setUpdatedProposals] = useState([]);
   
@@ -95,10 +95,10 @@ const Proposals = () => {
   const [selectedItemStateId, setSelectedItemStateId] = useState();
   ////////
   
-  useMoralisSubscription("MultiSigAlertNewApprovalX", q => q, [], { 
+  useMoralisSubscription("MultiSigAlertNewApprovalZZ", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
-  useMoralisSubscription("NewApprovalSignatureX", q => q, [], { 
+  useMoralisSubscription("NewApprovalSignatureZZ", q => q, [], { 
     onUpdate: data => updateApprovalSignature(data),
   });
 
