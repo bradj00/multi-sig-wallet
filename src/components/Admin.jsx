@@ -6,18 +6,18 @@ import { contractABI, contractAddress } from '../contractVars/bankABI';
 const Styles = {
     table: {
         marginTop:'10%',
-        border:'1px solid black',
+        border:'1px solid #666',
         width: '100%',
         tableLayout: 'auto'
       },
       th: {
     
-        border:'2px solid black'
+        border:'2px solid #666'
       },
       td: {
     
-        borderLeft:'1px solid black',
-        borderRight:'1px solid black'
+        borderLeft:'1px solid #666',
+        borderRight:'1px solid #666'
       },
 }
 

@@ -232,12 +232,7 @@ const Proposals = () => {
   }
 
 
-useEffect(()=>{
-  // console.log('updated state: ')
-  // console.log(updatedProposalsState)
-  // console.log(updatedProposalsState[1].custodianMember)
-  // console.log(updatedProposalsState[1].status)
-},[updatedProposalsState]);
+
 
 useEffect(()=>{
   // console.log('got data back for id: '+selectedRequestId);
@@ -451,7 +446,7 @@ function proposalStatusReturn(status){
               <th style={Styles.th}>Status </th>
             </tr>
           { 
-            updatedProposals.map((obj2, index) => ( 
+            updatedProposals.map((obj2, index) => (  
               
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(obj2.attributes.idGuy) }  }>
                 <td style={Styles.tdId}>{obj2.attributes.idGuy  } </td>
@@ -514,28 +509,7 @@ function proposalStatusReturn(status){
               })
 
             }
-              {/* <td style={Styles.td}>{updatedProposalsState[0].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[0].status, updatedProposalsState[0].custodianMember)} </td>
-              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[0].custodianMember)} </td>
-              
-          <tr  style={{userSelect:'none'}}   >
-              <td style={Styles.td}>{updatedProposalsState[1].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[1].status, updatedProposalsState[1].custodianMember)} </td>
-              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[1].custodianMember)} </td>
-          </tr>
-          <tr  style={{userSelect:'none'}}   >
-              <td style={Styles.td}>{updatedProposalsState[2].custodianMember} </td>
-              <td style={Styles.td}>{statusFunction(updatedProposalsState[2].status, updatedProposalsState[2].custodianMember)} </td>
-              <td style={Styles.td}>{isMeSignatureSubmit(updatedProposalsState[2].custodianMember)} </td>
-          </tr> */}
-            {/* {
-            updatedProposalsState.map((custodian,index)=>{
-              <tr key={index} style={{userSelect:'none'}}   >
-                <td style={Styles.td}>{custodian.receipient} </td>
-                <td style={Styles.td}>{custodian.status ? 'accepted' : 'rejected' } </td>
-              </tr>
-            })
-            } */}
+
           </tbody>
         </table>
         </div>

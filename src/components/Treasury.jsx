@@ -6,7 +6,7 @@ import { contractABI, contractAddress } from '../contractVars/bankABI';
 const Styles = {
   table: {
     marginTop:'10%',
-    border:'1px solid black',
+    border:'1px solid #666',
     width: '75%',
     tableLayout: 'auto',
     marginLeft: '13%'
@@ -14,12 +14,12 @@ const Styles = {
   th: {
     color: '#0892ff',
     fontSize:'30px',
-    border:'2px solid black'
+    border:'2px solid #666'
   },
   td: {
     fontSize:'20px',
-    borderLeft:'1px solid black',
-    borderRight:'1px solid black'
+    borderLeft:'1px solid #666',
+    borderRight:'1px solid #666'
   },
 
 }
