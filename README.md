@@ -8,6 +8,7 @@ You will need a browser web3 wallet such as Metamask to interact with the dApp.
 
 
 #### SETUP
+* from the root directory run `yarn install` then `yarn start` to launch the localhost UI. If you wanted to generate production files simply run `yarn build`
 
 Once contract has been initialized via firstRun() it cannot be altered without re-deploying contract. This should be a useful feature but can easily be altered in `MultiSig.sol`. Before deployment make the following adjustments in the browser for your needs: 
 
@@ -36,7 +37,7 @@ Once contract has been initialized via firstRun() it cannot be altered without r
 
 #### USE
 * Accept deposits into contract for treasury keeping
-* Raise new proposals for `receipients`
+* Raise new proposals for fund management
 * View `custodian accounts` for the contract. These addresses have vote weight on all proposals, configured by the `contractOwner` defined in `MultiSig.sol`
 * View Historic Proposal outcomes
-* Address Book with ENS support (coming soon) -- USE THIS WITH GREAT CAUTION AND ALWAYS DOUBLE-CHECK ALL ADDRESSES BEFORE SENDING!!
+* Address Book with ENS support (on chain or Moralis based coming soon)
