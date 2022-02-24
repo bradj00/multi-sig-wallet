@@ -106,7 +106,7 @@ const History = () => {
         <tr>
           <td>Deposit</td>
           <td>{getEllipsisTxt(item.attributes.fromThisGuy, 4)}</td>
-          <td>{Moralis.Units.FromWei(item.attributes.valueGuy)}</td>
+          <td style={{color:'#00cc00'}}>{Moralis.Units.FromWei(item.attributes.valueGuy)}</td>
           <td><a href={txHash} target="_blank">{getEllipsisTxt(item.attributes.transaction_hash, 4)}</a></td>
           <td>{timestamp.toString().substring(0,24)}</td>
         </tr>)   
@@ -118,9 +118,9 @@ const History = () => {
             let timestamp = new Date(item.attributes.block_timestamp);
             return(
             <tr>
-              <td>{deriveAction(item.attributes.didSucceed)}</td>
-              <td style={{color:'#00cc00'}}>[contract owner]</td>
-              <td> {Moralis.Units.FromWei(item.attributes.paymentAmount)} </td>
+              <td >{deriveAction(item.attributes.didSucceed)}</td>
+              <td >[contract owner]</td>
+              <td style={{color:'#cc0000'}}> {Moralis.Units.FromWei(item.attributes.paymentAmount)} </td>
               <td><a href={txHash} target="_blank">{getEllipsisTxt(item.attributes.transaction_hash, 4)}</a></td>
               <td>{timestamp.toString().substring(0,24)}</td>
             </tr>)   
