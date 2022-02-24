@@ -10,7 +10,7 @@ You will need a browser web3 wallet such as Metamask to interact with the dApp.
 #### SETUP
 * from the root directory run `yarn install` then `yarn start` to launch the localhost UI. If you wanted to generate production files simply run `yarn build`
 
-Once contract has been initialized via firstRun() it cannot be altered without re-deploying contract. This should be a useful feature but can easily be altered in `MultiSig.sol`. 
+Once contract has been initialized via firstRun() it cannot be altered without re-deploying contract. This should be a useful feature but can easily be altered in `MultiSig.sol` before deployment.
 
 * Configure `contractOwner` in `./contracts/MultiSig.sol` to the contract owner's wallet address
 * Deploy contract to your favorite EVM chain (Ethereum, Polygon, etc.)
