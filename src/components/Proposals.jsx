@@ -3,6 +3,7 @@ import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, u
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 import { getEllipsisTxt } from "../helpers/formatters";
 import ContractOwnerSendButton from './ContractOwnerSendButton';
+import ExecuteLink from './subComponents/ExecuteLink';
  
 
 
@@ -468,7 +469,7 @@ function proposalStatusReturn(status){
           } 
 
             {
-            data[0].slice(0).reverse().map((obj, index) => { 
+            data[0].slice(0).reverse().map((obj, index) => {  
               let proposalStatus = parseInt(obj[4]._hex,16)
               let proposalId = parseInt(obj[1]);
               return(
@@ -476,11 +477,13 @@ function proposalStatusReturn(status){
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
                 <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
                 <td style={Styles.tdReason}>{obj[3]}</td>                  
-                <td style={Styles.td}>{ Moralis.Units.FromWei(parseInt(obj[2]._hex)) }</td>               
+                <td style={Styles.td}>{ Moralis.Units.FromWei(''+parseInt(obj[2]._hex)) }</td>               
+                {/* <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>                */}
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
                 <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td>
-                {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: proposalId, status: proposalStatus }}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>}
+                {/* {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: proposalId, status: proposalStatus }}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>} */}
+                <ExecuteLink proposalId={{proposalId: proposalId, status: proposalStatus }}/>
               </tr>
               )
              
