@@ -34,6 +34,15 @@ ul {
   .navLink:hover {
     color :"#00ff00";
   }
-
+  tr {
+    background: rgba(10,10,10, .4);
+    user-select: none;
+  }
+  tr:hover {
+    background: #222;
+    cursor: pointer;
+}
+  /* tr:nth-child(even) {background: #555}
+  tr:nth-child(odd) {background: #333} */
 
   

@@ -1,26 +1,64 @@
 import React, {useEffect, useState} from 'react'
 import { useTokenPrice , useNativeBalance, useERC20Balances, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
-
+import '../styles/styles.css';
 
 const Styles = {
   table: {
-    marginTop:'10%',
-    border:'1px solid #666',
-    width: '75%',
+    position:'absolute',
+    right:'-1.5%',
+    marginTop:'0.5%',
+    // width: '45%',
     tableLayout: 'auto',
-    marginLeft: '13%'
+    borderSpacing: '0px',
+    border:'10px solid rgba(10,10,10, 0.2)',
+    borderRadius:'20px',
+    padding:'0px',
+    overflow:'auto'
+
   },
   th: {
     color: '#0892ff',
-    fontSize:'30px',
-    border:'2px solid #666'
+    fontSize:'25px',
+    // border:'2px solid #666'
+    
   },
   td: {
-    fontSize:'20px',
-    borderLeft:'1px solid #666',
-    borderRight:'1px solid #666'
+    fontSize:'15px',
+    
+
   },
+  tdSymbol:{
+    padding:'5px',
+  },
+  tokenSymbol:{
+    fontSize:'20px',
+    fontWeight:'bold',
+    display:'flex',
+    justifyContent:'left',   
+    color: '#91907A',
+  },
+  tokenName:{
+    fontSize:'11px',
+    fontWeight:'normal',
+
+    display:'flex',
+    justifyContent:'left',        
+  },
+  tokenQty: {
+    justifyContent: 'right',
+    display:'flex',
+    color: '#91907A',
+    fontSize:'18px',
+  },
+  tokenEstValue: {
+    justifyContent: 'right',
+    display:'flex',
+    color: '#ddd',
+    fontSize:'12px',
+  }
+
+
 
 }
 
@@ -41,8 +79,8 @@ const Treasury = () => {
   );
   const getContractERC20BalanceMoralis = useERC20Balances( 
     {
-      address: contractAddress,
-      chain:'mumbai',
+      address: '0x451E9948f930C33Bcda8d97F99fc1df4737921Db',
+      chain:'eth',
       //to_block:
     }
   );
@@ -96,7 +134,7 @@ const Treasury = () => {
  },[getContractNativeBalanceMoralis.data]);
 
  useEffect(()=>{
-  console.log('****',erc20TokenBalance);
+  console.log('****',erc20TokenBalance); 
  },[erc20TokenBalance]);
  
  useEffect(()=>{
@@ -118,31 +156,54 @@ const Treasury = () => {
 
 
   return (
-    <div>
-        <br></br>
-    <button onClick={()=>{submitDeposit.fetch()}}>Make Deposit</button>
-        <div style={{position:'absolute', left:'3%', width:'95%'}}>
+    <div style={{}}>
+        {/* <br></br> */}
+    {/* <button onClick={()=>{submitDeposit.fetch()}}>Make Deposit</button> */}
+        <div style={{position:'absolute', left:'3%', width:'95%',height:'85%',  }}>
         <table style={Styles.table}>
           <tbody>
-          <tr>
+          {/* <tr>
+            <th style={Styles.th}><strong>Logo </strong></th>
             <th style={Styles.th}><strong>Asset </strong></th>
             <th style={Styles.th}><strong>Amount </strong></th>
             <th style={Styles.th}><strong>Swap Quote</strong> </th>
             <th style={Styles.th}><strong>Estimated Value</strong> </th>
-          </tr>
+          </tr> */}
           <tr>
-            <td style={Styles.td}>devETH </td>
-            <td style={Styles.td}>{thisContractBalance} </td>
-            <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
-            <td style={Styles.td}>${tokenPriceFetch.data ? parseFloat(thisContractBalance * tokenPriceFetch.data.usdPrice).toFixed(2) : 0}</td>
+
+            <td style={Styles.td}> </td>
+                <td style={Styles.tdSymbol}>
+                  <div>
+                    <div style={Styles.tokenSymbol}>devETH</div>
+                    <div style={Styles.tokenName}>testnet ETH</div>
+                   </div>
+                  </td>
+                <td >
+                  <div>
+                    <div style={Styles.tokenQty}>{thisContractBalance}</div>
+                    <div style={Styles.tokenEstValue}>$5.00</div>
+                  </div>
+                </td>  
+
           </tr>
           {erc20TokenBalance.map((item, index)=>{   
             return(
               <tr key={index}>
-                <td style={Styles.td}>{item.symbol}</td> 
-                <td style={Styles.td}>{Moralis.Units.FromWei(item.balance)}</td>
-                <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td>
-                <td style={Styles.td}>${parseFloat(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice).toFixed(2)}</td>
+                <td style={Styles.td}> <img src={item.thumbnail} style={{marginLeft:'25%', height:'35px', paddingRight:'40px'}}></img></td>
+                <td style={Styles.tdSymbol}>
+                  <div>
+                    <div style={Styles.tokenSymbol}>{item.symbol}</div>
+                    <div style={Styles.tokenName}>{item.name}</div>
+                   </div>
+                  </td>
+                <td >
+                  <div>
+                    <div style={Styles.tokenQty}>{parseFloat(Moralis.Units.FromWei(item.balance)).toFixed(4)}</div>
+                    <div style={Styles.tokenEstValue}>${parseFloat(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice).toFixed(2)}</div>
+                  </div>
+                </td>
+                {/* <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td> */}
+                <td style={Styles.td}></td>
               </tr>  
               )           
           })}
