@@ -188,15 +188,15 @@ const Treasury = () => {
             </label>
           </form>
         </div>
-        <div className="selectAssetButton" onClick={()=>{showSelectAssetDiv() }}  style={{zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
+        <div className="selectAssetButton" onClick={()=>{ }}  style={{userSelect:'none', zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
             Submit
         </div>
       </div>
       <div style={{display:displayUserAssetsDiv}}>
-      <div onClick={()=>{resetSelectAssetDiv() }} className="xButton" style={{position:'absolute', left:'38%', top:'15%', fontSize:'40px', userSelect:'none', }}>ⓧ </div>
+      <div onClick={()=>{resetSelectAssetDiv() }} className="xButton" style={{position:'absolute', left:'7%', top:'13%', fontSize:'40px', userSelect:'none', }}>ⓧ </div>
 
-        <div style={{position:'absolute', left:'15%', top:'8%', fontSize:'35px'}}>MY ASSETS</div>
-        <div style={{position:'absolute', top:'15%', left:'2%', width:'34%', height:'80%', border:'6px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
+        <div style={{position:'absolute', left:'20%', top:'8%', fontSize:'35px'}}>MY ASSETS</div>
+        <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'6px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
         
         <table style={Styles.table}>
           <tbody>
