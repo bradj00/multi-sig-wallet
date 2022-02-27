@@ -42,6 +42,27 @@ ul {
     background: #222;
     cursor: pointer;
 }
+
+::-webkit-scrollbar {display:none;}
+
+ .selectAssetButton {
+  border: 1px solid rgba(1,1,1,0.5);
+  }
+ .selectAssetButton:hover {
+   font-weight: bold;
+
+   cursor: pointer;
+   border: 2px solid rgba(1,1,1,0.5);
+ }
+
+ .xButton{
+  color: rgba(150,150,150,0.5);
+ }
+ .xButton:hover{
+   color: rgba(150,150,150,1);
+   cursor: pointer;
+   font-weight: 1800;
+ }
   /* tr:nth-child(even) {background: #555}
   tr:nth-child(odd) {background: #333} */
 
