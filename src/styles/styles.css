@@ -9,7 +9,9 @@ ul {
     margin: 0;
     
   }
-  
+  .dirty:first-child {border-radius: 20px 0 0 20px!important;}
+  .dirty:last-child {border-radius:  0 20px 20px 0!important;}
+
   .menu li {
     margin-top: 20px;
     font-family: sans-serif;
@@ -62,6 +64,20 @@ ul {
    color: rgba(150,150,150,1);
    cursor: pointer;
    font-weight: 1800;
+ }
+
+ .selectedAssetDiv {
+   background: rgba(50,50,50,0.3);
+ }
+ .selectedAssetDiv:hover {
+   cursor: pointer;
+   background: rgba(150,150,150,0.7);
+ }
+ .maxDivButton{
+  background: rgba(50,50,50,0.7);
+ }
+ .maxDivButton:hover{
+  background: rgba(150,150,150,0.7);
  }
   /* tr:nth-child(even) {background: #555}
   tr:nth-child(odd) {background: #333} */

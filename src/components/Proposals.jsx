@@ -37,7 +37,7 @@ var Styles= {
   tdReason: {
     color:"#eee",
     fontSize:'18px',
-    border:'0.5px dashed #444',
+    // border:'0.5px dashed #444',
     paddingLeft:'2px',
     paddingRight:'2px'
   },
@@ -64,7 +64,8 @@ var Styles= {
     right:'0.5%',
     top:'17%',
     border:'1px solid #ddd',
-    backgroundColor:'#3B3E44',
+    // backgroundColor:'#3B3E44',
+    backgroundColor:'rgba(55,55,55,0.3)',
     color:'#fff',
     
     
@@ -335,7 +336,7 @@ function showNewProposalDiv(){
           New Proposal
         </div>
         <div>
-          <form onSubmit={handleSubmit}>
+          <form autocomplete="off" onSubmit={handleSubmit}>
 
               <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
               <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;

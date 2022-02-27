@@ -6,13 +6,12 @@ import DepositTreasuryAssets from './DepositTreasuryAssets';
 
 const Styles = {
   table: {
-    
-    right:'-1.5%',
-    marginTop:'0.5%',
     // tableLayout: 'auto',
     borderSpacing: '0px',
+    display:'block',
+    width:'100%',
+    justifyContent:'center',
 
-    padding:'0px',
   },
   th: {
     color: '#0892ff',
@@ -22,30 +21,35 @@ const Styles = {
   },
   td: {
     fontSize:'15px',
-    
-
+    width:'100%',
   },
+
+
+
   tdSymbol:{
     padding:'5px',
+
   },
+
   tokenSymbol:{
     fontSize:'20px',
     fontWeight:'bold',
     display:'flex',
     justifyContent:'left',   
-    color: '#91907A',
+    color: '#ADAC93',
+    marginLeft:'-350%'
   },
   tokenName:{
     fontSize:'11px',
     fontWeight:'normal',
-
     display:'flex',
     justifyContent:'left',        
+    marginLeft:'-350%',
   },
   tokenQty: {
     justifyContent: 'right',
     display:'flex',
-    color: '#91907A',
+    color: '#ADAC93',
     fontSize:'18px',
     paddingRight:'10px'
   },
@@ -55,6 +59,32 @@ const Styles = {
     color: '#ddd',
     fontSize:'12px',
     paddingRight:'10px'
+  },
+  selectedTokenDiv:{
+    position:'absolute',
+    right:'3%',
+    top:'40%',
+    fontSize:'30px',
+    zIndex:'55',
+    userSelect:'none',
+    paddingLeft: '5%',
+    paddingRight: '5%',
+    borderRadius:'25px',
+  },
+  maxQtyStyle:{
+    position:'absolute',
+    top:'52%',
+    right: '26%',
+    color:'#00A6F8'
+  },
+  maxQtyStyleTxt:{
+    color:'#ccc',
+    borderRadius:'20px',
+    border: '1px solid rgba(50,50,50,1)',
+ 
+    cursor: 'pointer',
+    fontStyle:'italic',
+    fontSize:'11px',
   }
 
 }
@@ -66,6 +96,7 @@ function commaNumber(x) {
 
 const Treasury = () => {
   const {Moralis} = useMoralis();
+  const {account} = useChain();
   const [displayUserAssetsDiv, setDisplayUserAssetsDiv]             = useState('none');
   const [displayUserSelectAssetsDiv, setDisplayUserSelectAssetsDiv] = useState('block');
 
@@ -78,26 +109,37 @@ const Treasury = () => {
     {
       address: contractAddress,
       chain:'mumbai',
-      //to_block:
     }
   );
   const getContractERC20BalanceMoralis = useERC20Balances( 
     {
-      address: '0x451E9948f930C33Bcda8d97F99fc1df4737921Db',
-      chain:'eth',
-      //to_block:
+      address: contractAddress,
+      chain:'mumbai',
     }
   );
+  const getContractERC20BalanceUser = useERC20Balances( 
+    {
+      address: account,
+      chain:'mumbai',
+    }
+  );
+  const [showMaxQtyDiv, setShowMaxQtyDiv] = useState(false);
+  const [depositQty, setDepositQty] = useState(0);
+  const [selectedAssetObjIsSelected, setSelectedAssetObjIsSelected] = useState(false);
+  const [selectedAssetObj, setSelectedAssetObj] = useState({});
 
+  const [userErc20TokenBalance, setUserErc20TokenBalance] = useState([]);
   const [erc20TokenBalance, setErc20TokenBalance] = useState([]);
   const [thisContractBalance, setThisContractBalance] = useState('loading..');
+
   const submitDeposit = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
     contractAddress: contractAddress,
     functionName: "depositEth",
-    msgValue: 8880000000000000,
+    msgValue: Moralis.Units.ETH(depositQty),
   }); 
+
   const getContractBalance = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
@@ -114,6 +156,8 @@ const Treasury = () => {
     getContractBalanceCall();
     getContractNativeBalanceMoralis.getBalances();
     getContractERC20BalanceMoralis.fetchERC20Balances();
+    
+    getContractERC20BalanceUser.fetchERC20Balances();
     tokenPriceFetch.fetchTokenPrice();
     
     // console.log('---___---');
@@ -148,6 +192,14 @@ const Treasury = () => {
     setErc20TokenBalance(getContractERC20BalanceMoralis.data);
   }
  },[getContractERC20BalanceMoralis.data]);
+
+ useEffect(()=>{
+  if (getContractERC20BalanceUser.data != null){
+    console.log('user ERC20 token balance:');
+    console.log(getContractERC20BalanceUser.data);
+    setUserErc20TokenBalance(getContractERC20BalanceUser.data);
+  }
+ },[getContractERC20BalanceUser.data]);
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
@@ -166,29 +218,46 @@ const Treasury = () => {
    setDisplayUserAssetsDiv('none');
    setDisplayUserSelectAssetsDiv('block');
  }
-
+function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
+  console.log('clicked: ',symbol,tokenAddress);
+  setSelectedAssetObj({symbol: symbol, tokenAddress: tokenAddress})
+  setSelectedAssetObjIsSelected(true);
+  resetSelectAssetDiv();
+  setDepositQty(maxQty); //depositQty  //showMaxQtyDiv
+ 
+}
     {/* <button onClick={()=>{submitDeposit.fetch()}}>Make Deposit</button> */}
   return (
     <div style={{}}>
-
+{/* selectedAssetObj */}
 
       <div style={{display:'flex',display:displayUserSelectAssetsDiv, width:'33%', top:'25%', left:'10%', backgroundColor:'rgba(15,15,15,0.4)', border:'1px solid rgba(1,1,1,0.4)', height:'400px', position:'absolute', borderRadius:'20px' }}>
       <div style={{position:'absolute', left:'37%', top:'8%', fontSize:'35px'}}>DEPOSIT</div>
-        <div className="selectAssetButton" onClick={()=>{showSelectAssetDiv() }}  style={{zIndex:'55', height:"8%", width:'30%',  backgroundColor:'rgba(0,130,255,0.5',  paddingTop:"2%", position:'absolute', top:'40%', right:'5%',  borderRadius:'25px'}}>
-            Select A Token &nbsp;&nbsp;<strong>↓</strong>
-        </div>
-        <div style={{position:'absolute', top:'41%', left:'5%'}}>
+        {selectedAssetObjIsSelected ? 
+          <>
+          <div className='selectedAssetDiv' onClick={()=>{showSelectAssetDiv()}} style={Styles.selectedTokenDiv}>
+            {selectedAssetObj.symbol} ↓
+          </div>
+           <div  style={Styles.maxQtyStyle}>
+              <div className="maxDivButton" style={Styles.maxQtyStyleTxt}>MAX: </div>{depositQty}
+          </div>
+          </>:
+          <div className="selectAssetButton" onClick={()=>{showSelectAssetDiv() }}  style={{zIndex:'55', height:"8%", width:'30%',  backgroundColor:'rgba(0,130,255,0.5',  paddingTop:"2%", position:'absolute', top:'40%', right:'5%',  borderRadius:'25px'}}>
+              Select A Token &nbsp;&nbsp;<strong>↓</strong>
+          </div>  
+        }
+        <div style={{position:'absolute', top:'41%', left:'5%', }}>
           <form > 
             <label >
               <input onKeyPress={(event) => {
         if (!/[0-9,\.]/.test(event.key)) {
           event.preventDefault();
         }
-      }} type="text" placeholder="0.0" style={{ fontSize:'35px', color: '#fff', backgroundColor:'#333', height:'25px', width:'70%', marginLeft:'-35%', padding:'5px',}} />
+      }} type="text" value={depositQty} onChange={(e) => setDepositQty(e.target.value)} placeholder="0.0" style={{ border:'none',fontSize:'35px', color: '#fff', backgroundColor:'rgba(15,15,15,0.4)', height:'25px', width:'60%', marginLeft:'-40%', padding:'5px',}} />
             </label>
           </form>
         </div>
-        <div className="selectAssetButton" onClick={()=>{ }}  style={{userSelect:'none', zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
+        <div className="selectAssetButton" onClick={()=>{submitDeposit.fetch() }}  style={{userSelect:'none', zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
             Submit
         </div>
       </div>
@@ -196,7 +265,7 @@ const Treasury = () => {
       <div onClick={()=>{resetSelectAssetDiv() }} className="xButton" style={{position:'absolute', left:'7%', top:'13%', fontSize:'40px', userSelect:'none', }}>ⓧ </div>
 
         <div style={{position:'absolute', left:'20%', top:'8%', fontSize:'35px'}}>MY ASSETS</div>
-        <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'6px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
+        <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
         
         <table style={Styles.table}>
           <tbody>
@@ -217,9 +286,9 @@ const Treasury = () => {
                 </td>  
 
           </tr>
-          {erc20TokenBalance.map((item, index)=>{   
+          {userErc20TokenBalance.map((item, index)=>{   
             return(
-              <tr key={index}>
+              <tr onClick={()=>{clickedAssetToDeposit(item.symbol, item.token_address, (Moralis.Units.FromWei(item.balance) * 1 ) )}}  key={index}>
                 <td style={Styles.td}> <img src={item.thumbnail} style={{marginLeft:'25%', height:'35px', paddingRight:'40px'}}></img></td>
                 <td style={Styles.tdSymbol}>
                   <div>
@@ -230,7 +299,8 @@ const Treasury = () => {
                 <td > 
                   <div>
                     <div style={Styles.tokenQty}>{commaNumber(Moralis.Units.FromWei(item.balance) * 1 ) }</div>
-                    <div style={Styles.tokenEstValue}>${commaNumber(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice)}</div>
+                   
+                    {tokenPriceFetch.data? <div style={Styles.tokenEstValue}>${commaNumber(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice)}</div> : <div></div>}
                   </div>
                 </td>
                 {/* <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td> */}
@@ -252,13 +322,13 @@ const Treasury = () => {
 
       <div>
         <div style={{position:'absolute', right:'15%', top:'8%', fontSize:'35px'}}>TREASURY</div>
-        <div style={{position:'absolute', top:'15%', right:'2%', width:'34%', height:'80%', border:'6px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
+        <div style={{position:'absolute', top:'15%', right:'2%', width:'34%',  height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
         
-        <table style={Styles.table}>
-          <tbody>
-          <tr>
+        <table  style={Styles.table}>
+          <tbody >
+          <tr >
 
-            <td style={Styles.td}></td>
+            <td style={Styles.td}><img src='' style={{marginLeft:'25%', height:'35px', paddingRight:'40px'}}></img></td>
                 <td style={Styles.tdSymbol}>
                   <div>
                     <div style={Styles.tokenSymbol}>devETH</div>
@@ -275,7 +345,7 @@ const Treasury = () => {
           </tr>
           {erc20TokenBalance.map((item, index)=>{   
             return(
-              <tr key={index}>
+              <tr  key={index}>
                 <td style={Styles.td}> <img src={item.thumbnail} style={{marginLeft:'25%', height:'35px', paddingRight:'40px'}}></img></td>
                 <td style={Styles.tdSymbol}>
                   <div>
@@ -286,7 +356,7 @@ const Treasury = () => {
                 <td > 
                   <div>
                     <div style={Styles.tokenQty}>{commaNumber(Moralis.Units.FromWei(item.balance) * 1 ) }</div>
-                    <div style={Styles.tokenEstValue}>${commaNumber(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice)}</div>
+                    {tokenPriceFetch.data? <div style={Styles.tokenEstValue}>${commaNumber(Moralis.Units.FromWei(item.balance) * tokenPriceFetch.data.usdPrice)}</div> : <div></div>}
                   </div>
                 </td>
                 {/* <td style={Styles.td}>{tokenPriceFetch.data ? tokenPriceFetch.data.formattedUsd : 0}</td> */}
