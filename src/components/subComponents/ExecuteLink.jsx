@@ -26,7 +26,6 @@ const ExecuteLink = (proposalId) => {
     const {account} = useChain();
     useEffect(()=>{
         fetchContractOwner.fetch();
-
     },[])
     // const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({ 
     const fetchContractOwner = useWeb3ExecuteFunction({ 
@@ -54,7 +53,7 @@ const ExecuteLink = (proposalId) => {
 
     useEffect(()=>{
         console.log('account '+account);
-        if (account != null){fetch();}
+        // if (account != null){fetch();}
     },[account]);
     
     
@@ -72,7 +71,7 @@ const ExecuteLink = (proposalId) => {
             }
 
         }else {
-            console.log('NO match');
+            // console.log('NO match');
             return(<></>);
         }
     }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, Component } from 'react'
-import { useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
+import { useMoralis, useERC20Balances, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 import { getEllipsisTxt } from "../helpers/formatters";
 import ContractOwnerSendButton from './ContractOwnerSendButton';
 import ExecuteLink from './subComponents/ExecuteLink';
+import TokenDepositDropdown from './TokenDepositDropdown';
  
 
 
@@ -74,7 +75,7 @@ var Styles= {
 
 const Proposals = () => {
 
-  
+  const [treasuryTokenSymbols, setTreasuryTokenSymbols] = useState([]);
   const {Moralis} = useMoralis();
   const [propsalInfoDivDisplay, setPropsalInfoDivDisplay] = useState('0%');
   const [voteCount, setVoteCount] = useState([]);
@@ -130,12 +131,12 @@ const Proposals = () => {
 
   });  
 
-  // const getContractERC20BalanceMoralis = useERC20Balances( 
-  //   {
-  //     address: contractAddress,
-  //     chain:'mumbai',
-  //   }
-  // );
+  const getContractERC20BalanceMoralis = useERC20Balances( 
+    {
+      address: contractAddress,
+      chain:'mumbai',
+    }
+  );
 
   
   const getContractOwner = useWeb3ExecuteFunction({ 
@@ -179,17 +180,30 @@ const Proposals = () => {
   },[getContractOwner.data]);
 
   useEffect(()=>{
-    if ((contractOwner) && (account) &&(contractOwner.toUpperCase() == account.toUpperCase()) ){
+    if ((contractOwner) && (account) &&(contractOwner.toUpperCase() == account.toUpperCase()) ){  
       setIsAccountContractOwner(true);
     }else {
       // setIsAccountContractOwner(false);
     } 
   },[contractOwner])
 
-  useEffect(()=>{
+  useEffect(()=>{ 
+    if (getContractERC20BalanceMoralis.data && getContractERC20BalanceMoralis.data.length > 1){  
+      console.log('\t\tTHIS TOKEN DATA: ', getContractERC20BalanceMoralis.data, getContractERC20BalanceMoralis.data[0].symbol)
+      setTreasuryTokenSymbols([]);
+      getContractERC20BalanceMoralis.data.map((item)=>{
+        console.log('token: ',item.symbol);
+        setTreasuryTokenSymbols([...treasuryTokenSymbols, item.symbol]); 
+        console.log('treasuryTokenSymbols new value: ', treasuryTokenSymbols);
+      })
+    }
+  },[getContractERC20BalanceMoralis.data]);
+
+  useEffect(()=>{ 
     fetch();
     getProposalInfo(-1);
     getContractOwnerFunc();
+    // getContractERC20BalanceMoralis.fetchERC20Balances();
   },[])
 
   useEffect(() => {
@@ -258,6 +272,7 @@ useEffect(()=>{
   }
 },[getProposalApprovals.data])
 
+
 const {account} = useChain();
 function isMeSignatureSubmit(custodian){
   if (account == null){return<></>}
@@ -322,7 +337,7 @@ useEffect(()=>{
 
 },[voteCount]);
 
-  useEffect(()=>{
+useEffect(()=>{
   // console.log('account is: '+account)
 
 },[account])
@@ -339,19 +354,18 @@ function showNewProposalDiv(){
   // else{
     return(
       <div style={Styles.newProposalDiv}>
+        
         <div style={{fontSize:'20px', width:'100%', marginBottom:'10%'}}>
           New Proposal
         </div>
         <div>
-          <form autocomplete="off" onSubmit={handleSubmit}>
+                
+          <form autoComplete="off" onSubmit={handleSubmit}>
 
               <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
               <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;
-              <select style={{backgroundColor:'#fff',}}>
-                <option value="ETH"> ETH</option>
-                <option value="USDC">USDC</option>
-                <option value="DOGE">DOGE</option>
-              </select><br></br><br></br>
+              <TokenDepositDropdown />
+              <br></br><br></br>
               <textarea value={textArea} onChange={(e) => setTextArea(e.target.value)} placeholder='Enter Reason...'style={{backgroundColor:'#333', width:'80%', height:'200px'}}>
               </textarea>
             <br></br> <br></br>
@@ -457,6 +471,7 @@ function proposalStatusReturn(status){
               <th style={Styles.th}>Receipient </th>
               <th style={Styles.th}>Reason </th>
               <th style={Styles.th}>Amount </th>
+              <th style={Styles.th}>Token </th>
               <th style={Styles.th}>Votes </th>
               <th style={Styles.th}>Status </th> 
             </tr>
@@ -468,6 +483,7 @@ function proposalStatusReturn(status){
                 <td style={Styles.td}>{getEllipsisTxt(obj2.attributes.sendToGuy, 5)  }</td>
                 <td style={Styles.tdReason}>{obj2.attributes.reasonGuy  }</td>
                 <td style={Styles.td}>{Moralis.Units.FromWei(obj2.attributes.amountGuy) }</td>
+                <td style={Styles.td}>devETH</td>
                 <td style={Styles.td}> {calcVotes(obj2.attributes.idGuy)} </td>
                 <td style={Styles.td}> {proposalStatusReturn(obj2.attributes.idGuy)} </td>
                 {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: obj2.attributes.idGuy, status: proposalStatusReturn(obj2.attributes.idGuy)}}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>}
@@ -484,8 +500,9 @@ function proposalStatusReturn(status){
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
                 <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
-                <td style={Styles.tdReason}>{obj[3]}</td>                  
+                <td style={Styles.tdReason}>{obj[3]}</td>         
                 <td style={Styles.td}>{ Moralis.Units.FromWei(''+parseInt(obj[2]._hex)) }</td>               
+                <td style={Styles.td}>devETH</td>         
                 {/* <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>                */}
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
