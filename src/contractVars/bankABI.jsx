@@ -1,5 +1,6 @@
-export const contractAddress = '0xf3fBdD65C620c9a3Ad6d7557A402503945FD1797';
-export const nativeToken = 'devETH'
+export const contractAddress = '0xfD229Df2579010D285559b14d6D5B28f4acD0D03';
+// export const contractAddress = '0xf3fBdD65C620c9a3Ad6d7557A402503945FD1797';
+export const nativeToken = 'devEth';
 
 export const contractABI =[
 	{
@@ -64,7 +65,7 @@ export const contractABI =[
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "paymentAmount",
 				"type": "uint256"
 			}
 		],
@@ -103,6 +104,12 @@ export const contractABI =[
 				"internalType": "uint256",
 				"name": "idGuy",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "tokenSymbol",
+				"type": "string"
 			}
 		],
 		"name": "alertNewApproval",
@@ -238,6 +245,16 @@ export const contractABI =[
 						"internalType": "uint256",
 						"name": "status",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "contractAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "tokenSymbol",
+						"type": "string"
 					}
 				],
 				"internalType": "struct MultiSig.Requests[]",
@@ -373,6 +390,21 @@ export const contractABI =[
 				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isErc20",
+				"type": "bool"
+			},
+			{
+				"internalType": "address",
+				"name": "contractAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "tokenSymbol",
+				"type": "string"
 			}
 		],
 		"name": "newApproval",
@@ -402,6 +434,29 @@ export const contractABI =[
 			}
 		],
 		"name": "setVoteApprovalThreshold",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferERC20",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

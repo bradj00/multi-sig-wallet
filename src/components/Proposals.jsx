@@ -1,11 +1,11 @@
 import React, { useEffect, useState, Component } from 'react'
 import { useMoralis, useERC20Balances, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
-import { contractABI, contractAddress } from '../contractVars/bankABI';
+import { contractABI, contractAddress, nativeToken } from '../contractVars/bankABI';
 import { getEllipsisTxt } from "../helpers/formatters";
 import ContractOwnerSendButton from './ContractOwnerSendButton';
 import ExecuteLink from './subComponents/ExecuteLink';
-import TokenDepositDropdown from './TokenDepositDropdown';
- 
+
+  
 
 
 
@@ -73,7 +73,15 @@ var Styles= {
   }
 }
 
-const Proposals = () => {
+const Proposals = () => { 
+
+  
+  const [isErc20Selected, setIsErc20Selected] = useState(false);
+  const [selectedAssetContractAddress, setSelectedAssetContractAddress] = useState();
+  const [selectedAssetTokenSymbol, setSelectedAssetTokenSymbol] = useState();
+////////////////
+////////////////
+////////////////
 
   const [treasuryTokenSymbols, setTreasuryTokenSymbols] = useState([]);
   const {Moralis} = useMoralis();
@@ -151,7 +159,14 @@ const Proposals = () => {
     abi: contractABI,
     contractAddress: contractAddress,
     functionName: "newApproval",
-    params: {_sendTo: receipient,  _reason: textArea, _amount: sendAmountInWei}
+    params: {
+      _sendTo: receipient,
+      _reason: textArea,
+      _amount: sendAmountInWei,
+      isErc20: isErc20Selected,
+      contractAddress: selectedAssetContractAddress,
+      tokenSymbol: selectedAssetTokenSymbol 
+    }
   }); 
   const getProposalApprovals = useWeb3ExecuteFunction({ 
     chain:'mumbai',
@@ -173,7 +188,7 @@ const Proposals = () => {
     getContractOwner.fetch();
   }
   useEffect(()=>{
-    if (getContractOwner.data != undefined){
+    if (getContractOwner.data != undefined){ 
       setContractOwner(getContractOwner.data);
       console.log('contract owner is:'+contractOwner)   
     }
@@ -189,21 +204,22 @@ const Proposals = () => {
 
   useEffect(()=>{ 
     if (getContractERC20BalanceMoralis.data && getContractERC20BalanceMoralis.data.length > 1){  
-      console.log('\t\tTHIS TOKEN DATA: ', getContractERC20BalanceMoralis.data, getContractERC20BalanceMoralis.data[0].symbol)
-      setTreasuryTokenSymbols([]);
-      getContractERC20BalanceMoralis.data.map((item)=>{
-        console.log('token: ',item.symbol);
-        setTreasuryTokenSymbols([...treasuryTokenSymbols, item.symbol]); 
-        console.log('treasuryTokenSymbols new value: ', treasuryTokenSymbols);
-      })
+        // console.log('\t\tTHIS TOKEN DATA: ', getContractERC20BalanceMoralis.data, getContractERC20BalanceMoralis.data[0].symbol)
+        setTreasuryTokenSymbols([]); 
+        let q = [{symbol:nativeToken, contractAddress: '0x0000000000000000000000000000000000000000', isErc20: false}];
+        getContractERC20BalanceMoralis.data.map((item)=>{ 
+            q.push({symbol: item.symbol, contractAddress: item.token_address, isErc20: true});
+            // console.log('\t\t',q); 
+        })
+        setTreasuryTokenSymbols(q);
     }
-  },[getContractERC20BalanceMoralis.data]);
+},[getContractERC20BalanceMoralis.data]);  
 
   useEffect(()=>{ 
     fetch();
     getProposalInfo(-1);
     getContractOwnerFunc();
-    // getContractERC20BalanceMoralis.fetchERC20Balances();
+    getContractERC20BalanceMoralis.fetchERC20Balances();
   },[])
 
   useEffect(() => {
@@ -224,8 +240,22 @@ const Proposals = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('submitted');
+    console.log('\n\nsubmitted');
+    console.log(typeof receipient, receipient );
+    console.log(typeof textArea, textArea);
+    console.log(typeof sendAmountInWei, sendAmountInWei);
+    console.log(typeof isErc20Selected, isErc20Selected);
+    console.log(typeof selectedAssetContractAddress, selectedAssetContractAddress);
+    console.log(typeof selectedAssetTokenSymbol, selectedAssetTokenSymbol);
     submitNewProposal.fetch();
+
+    // _sendTo: receipient,
+    // _reason: textArea,
+    // _amount: sendAmountInWei,
+    // _isErc20: isErc20Selected,
+    // _selectedAssetContractAddress: selectedAssetContractAddress,
+    // _tokenSymbol: selectedAssetTokenSymbol 
+
   }
 
   function getProposalInfo(id){ 
@@ -342,16 +372,19 @@ useEffect(()=>{
 
 },[account])
 
-function showNewProposalDiv(){ 
+function updateTheSelectedTokenInfo(e){
+  console.log(e.target[e.target.selectedIndex].getAttribute("data-contractaddress"), e.target[e.target.selectedIndex].getAttribute("data-iserc"), );
+  let isErc20 = e.target[e.target.selectedIndex].getAttribute("data-iserc");
+  setSelectedAssetTokenSymbol(e.target.value);
+  if (isErc20 == 'true'){
+    setIsErc20Selected(true);
+  }else{
+    setIsErc20Selected(false);
+  }
+  setSelectedAssetContractAddress(e.target[e.target.selectedIndex].getAttribute("data-contractaddress"));
+}
 
-  // if (account && contractOwner && (account.toUpperCase() == contractOwner.toUpperCase()) ){ 
-  //   return(  
-  //     <>
-  //     Signed-in account is the contract owner !
-  //     </>
-  //   )
-  // }
-  // else{
+function showNewProposalDiv(){ 
     return(
       <div style={Styles.newProposalDiv}>
         
@@ -360,11 +393,18 @@ function showNewProposalDiv(){
         </div>
         <div>
                 
-          <form autoComplete="off" onSubmit={handleSubmit}>
-
+          <form autoComplete="off" onSubmit={handleSubmit}> 
               <input type="text" name="Receipient" value={receipient} onChange={(e) => setReceipient(e.target.value)} placeholder="Receipient" style={{color: '#fff', backgroundColor:'#333',width:'70%'}}/><br></br><br></br>
               <input type="text" name="Amount"     value={sendAmount} onChange={(e) => setSendAmount(e.target.value)} placeholder="Amount" style={{backgroundColor:'#333',width:'40%'}}/>&nbsp;&nbsp;
-              <TokenDepositDropdown />
+              <select onChange={e => updateTheSelectedTokenInfo(e) } style={{backgroundColor:'#fff',}}> 
+                  {
+                      treasuryTokenSymbols.map((item, key)=>{
+                          
+                          return(<option data-iserc={item.isErc20.toString()} data-contractaddress={item.contractAddress} key={key} value={item.symbol}> {item.symbol}</option>);
+                      })
+                  }
+                {/* <option  value='5'> 5</option> */}
+              </select>
               <br></br><br></br>
               <textarea value={textArea} onChange={(e) => setTextArea(e.target.value)} placeholder='Enter Reason...'style={{backgroundColor:'#333', width:'80%', height:'200px'}}>
               </textarea>
@@ -376,8 +416,8 @@ function showNewProposalDiv(){
       </div>
 
     )
-  // }
-}
+  
+}// isErc20Selected selectedAssetContractAddress  selectedAssetTokenSymbol
 
   function statusFunction(signatureStatus, custodian){
     signatureStatus = parseInt(signatureStatus,16);
@@ -496,13 +536,14 @@ function proposalStatusReturn(status){
             data[0].slice(0).reverse().map((obj, index) => {  
               let proposalStatus = parseInt(obj[4]._hex,16)
               let proposalId = parseInt(obj[1]);
+              // console.log('DATA m8: ',obj);
               return(
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
                 <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
                 <td style={Styles.tdReason}>{obj[3]}</td>         
                 <td style={Styles.td}>{ Moralis.Units.FromWei(''+parseInt(obj[2]._hex)) }</td>               
-                <td style={Styles.td}>devETH</td>         
+                <td style={Styles.td}>{obj.contractAddress}</td>         
                 {/* <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>                */}
                                    
                 <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     

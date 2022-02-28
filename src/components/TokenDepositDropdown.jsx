@@ -4,32 +4,7 @@ import { contractABI, contractAddress, nativeToken } from '../contractVars/bankA
 
 
 const TokenDepositDropdown = () => {
-    const [treasuryTokenSymbols, setTreasuryTokenSymbols] = useState([]);
-    const getContractERC20BalanceMoralis = useERC20Balances( 
-        {
-            address: contractAddress,
-            chain:'mumbai',
-        }
-        );
-
-    useEffect(()=>{ 
-        getContractERC20BalanceMoralis.fetchERC20Balances();
-    },[])
-
-    useEffect(()=>{ 
-        if (getContractERC20BalanceMoralis.data && getContractERC20BalanceMoralis.data.length > 1){  
-            console.log('\t\tTHIS TOKEN DATA: ', getContractERC20BalanceMoralis.data, getContractERC20BalanceMoralis.data[0].symbol)
-            setTreasuryTokenSymbols([]); 
-            let q = [nativeToken];
-            getContractERC20BalanceMoralis.data.map((item)=>{ 
-                q.push(item.symbol);
-                console.log('\t\t',q);
-            })
-            setTreasuryTokenSymbols(q);
-        }
-    },[getContractERC20BalanceMoralis.data]);     
-
-
+    
 
   return (
     <div style={{marginLeft:'68%', marginTop:'-6%' }}>
