@@ -1,5 +1,5 @@
 export const contractAddress = '0xf3fBdD65C620c9a3Ad6d7557A402503945FD1797';
- 
+export const nativeToken = 'devETH'
 
 export const contractABI =[
 	{

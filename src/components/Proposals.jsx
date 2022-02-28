@@ -130,6 +130,13 @@ const Proposals = () => {
 
   });  
 
+  // const getContractERC20BalanceMoralis = useERC20Balances( 
+  //   {
+  //     address: contractAddress,
+  //     chain:'mumbai',
+  //   }
+  // );
+
   
   const getContractOwner = useWeb3ExecuteFunction({ 
     chain:'mumbai',

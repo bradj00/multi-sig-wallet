@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useTokenPrice , useNativeBalance, useERC20Balances, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
+import { useTokenPrice , useNativeBalance, useERC20Balances, useERC20Transfers, useMoralis, useWeb3ExecuteFunction, useWeb3Contract, useWeb3Transfer, useMoralisSubscription, useChain } from 'react-moralis';
 import { contractABI, contractAddress } from '../contractVars/bankABI';
 import '../styles/styles.css';
 import DepositTreasuryAssets from './DepositTreasuryAssets';
@@ -99,6 +99,11 @@ const Treasury = () => {
   const {account} = useChain();
   const [displayUserAssetsDiv, setDisplayUserAssetsDiv]             = useState('none');
   const [displayUserSelectAssetsDiv, setDisplayUserSelectAssetsDiv] = useState('block');
+  // const {fetch, error, isFetching} = useERC20Transfers();
+  
+  
+
+
 
   // const { fetchTokenPrice, data: formattedData, error, isLoading, isFetching } = useTokenPrice({ address: "0x1f9840...1f984", chain: "eth" });
   const tokenPriceFetch = useTokenPrice({ address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", chain: "eth" });
@@ -123,14 +128,19 @@ const Treasury = () => {
       chain:'mumbai',
     }
   );
+  const [selectedTokenContractAddr, setSelectedTokenContractAddr] = useState('0x0000');
+  const [selecedTokenType, setSelectedTokenType] = useState('none');
   const [showMaxQtyDiv, setShowMaxQtyDiv] = useState(false);
-  const [depositQty, setDepositQty] = useState(0);
+  const [depositQtyMax, setDepositQtyMax] = useState(0);
+  const [depositQty, setDepositQty]       = useState(0);
+  
   const [selectedAssetObjIsSelected, setSelectedAssetObjIsSelected] = useState(false);
   const [selectedAssetObj, setSelectedAssetObj] = useState({});
 
   const [userErc20TokenBalance, setUserErc20TokenBalance] = useState([]);
   const [erc20TokenBalance, setErc20TokenBalance] = useState([]);
   const [thisContractBalance, setThisContractBalance] = useState('loading..');
+
 
   const submitDeposit = useWeb3ExecuteFunction({ 
     chain:'mumbai',
@@ -146,7 +156,14 @@ const Treasury = () => {
     contractAddress: contractAddress,
     functionName: "getContractBalance"
   }); 
-  
+
+  const submitDepositERC20 = useWeb3Transfer({
+    amount: Moralis.Units.Token(depositQty, 18),
+    receiver: contractAddress,
+    type: "erc20",
+    contractAddress: selectedTokenContractAddr,
+  });
+
   function getContractBalanceCall(){
     getContractBalance.fetch();
     console.log('fetching contract balance..');
@@ -218,13 +235,34 @@ const Treasury = () => {
    setDisplayUserAssetsDiv('none');
    setDisplayUserSelectAssetsDiv('block');
  }
-function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
-  console.log('clicked: ',symbol,tokenAddress);
+function clickedAssetToDeposit(symbol, tokenAddress, maxQty, tokenType){
+  setSelectedTokenType(tokenType);
+
+  console.log('clicked: ',symbol,tokenAddress,maxQty,tokenType);
   setSelectedAssetObj({symbol: symbol, tokenAddress: tokenAddress})
   setSelectedAssetObjIsSelected(true);
   resetSelectAssetDiv();
-  setDepositQty(maxQty); //depositQty  //showMaxQtyDiv
+  setDepositQtyMax(maxQty);
+  
+  setSelectedTokenContractAddr(tokenAddress);
+  //also need erc20 token number of decimal places here...
+  // setDepositQty(0); //depositQty  //showMaxQtyDiv
  
+}
+
+function submitDepositFunc(){
+  if (selecedTokenType == 'none'){
+    return;
+  }
+  if (selecedTokenType == 'erc20'){
+    console.log('ERC20 deposit...');
+    submitDepositERC20.fetch();
+  } 
+  else if (selecedTokenType == 'native'){
+    console.log('NATIVE deposit...');
+    submitDeposit.fetch();
+  } 
+
 }
     {/* <button onClick={()=>{submitDeposit.fetch()}}>Make Deposit</button> */}
   return (
@@ -239,7 +277,7 @@ function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
             {selectedAssetObj.symbol} ↓
           </div>
            <div  style={Styles.maxQtyStyle}>
-              <div className="maxDivButton" style={Styles.maxQtyStyleTxt}>MAX: </div>{depositQty}
+              <div onClick={()=>{ setDepositQty(depositQtyMax)}} className="maxDivButton" style={Styles.maxQtyStyleTxt}>MAX: </div>{depositQtyMax}
           </div>
           </>:
           <div className="selectAssetButton" onClick={()=>{showSelectAssetDiv() }}  style={{zIndex:'55', height:"8%", width:'30%',  backgroundColor:'rgba(0,130,255,0.5',  paddingTop:"2%", position:'absolute', top:'40%', right:'5%',  borderRadius:'25px'}}>
@@ -257,7 +295,7 @@ function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
             </label>
           </form>
         </div>
-        <div className="selectAssetButton" onClick={()=>{submitDeposit.fetch() }}  style={{userSelect:'none', zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
+        <div className="selectAssetButton" onClick={()=>{submitDepositFunc() }}  style={{userSelect:'none', zIndex:'55', height:"12%", width:'35%',  backgroundColor:'rgba(0,130,255,0.5',  fontSize:'33px',  position:'absolute', bottom:'5%', right:'35%',  borderRadius:'5px'}}>
             Submit
         </div>
       </div>
@@ -269,7 +307,7 @@ function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
         
         <table style={Styles.table}>
           <tbody>
-          <tr>
+          <tr onClick={()=>{clickedAssetToDeposit('devETH', '', thisContractBalance, 'native' )}}>
 
             <td style={Styles.td}></td>
                 <td style={Styles.tdSymbol}>
@@ -288,7 +326,7 @@ function clickedAssetToDeposit(symbol, tokenAddress, maxQty){
           </tr>
           {userErc20TokenBalance.map((item, index)=>{   
             return(
-              <tr onClick={()=>{clickedAssetToDeposit(item.symbol, item.token_address, (Moralis.Units.FromWei(item.balance) * 1 ) )}}  key={index}>
+              <tr onClick={()=>{clickedAssetToDeposit(item.symbol, item.token_address, (Moralis.Units.FromWei(item.balance) * 1 ), 'erc20' )}}  key={index}>
                 <td style={Styles.td}> <img src={item.thumbnail} style={{marginLeft:'25%', height:'35px', paddingRight:'40px'}}></img></td>
                 <td style={Styles.tdSymbol}>
                   <div>
