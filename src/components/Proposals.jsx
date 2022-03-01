@@ -116,10 +116,10 @@ const Proposals = () => {
   const [selectedItemStateId, setSelectedItemStateId] = useState();
   ////////
   
-  useMoralisSubscription("MultiSigAlertNewApprovalZZ", q => q, [], { 
+  useMoralisSubscription("MultiSigAlertNewApprovalBBB", q => q, [], { 
     onUpdate: data => updateProposalTable(data),
   });
-  useMoralisSubscription("NewApprovalSignatureZZ", q => q, [], { 
+  useMoralisSubscription("NewApprovalSignatureBBB", q => q, [], { 
     onUpdate: data => updateApprovalSignature(data),
   });
 
@@ -557,7 +557,7 @@ function proposalStatusReturn(status){
       return(<div style={{color:'#00ff00'}}>open</div>);
       break;
     case 2:
-      return(<div style={{color:'#aa0000'}}>closed</div>);
+      return(<div style={{color:'#006600'}}>completed</div>);
       break;
 
   }
@@ -573,7 +573,7 @@ function proposalStatusReturn(status){
         
 
           <div style={{position:'absolute', fontSize:'25px', left: '-10%', top:'8%', zIndex:5, width:'100%'}}>
-            Open Proposals
+            Proposals
           </div>
           <div style={{ position:'absolute', left:'1%', width:'100%', top:'17%', height:'45%', overflowY:'scroll', "::WebkitScrollbar": { width: '0', }}}>
           <table style={Styles.table}>

@@ -38,7 +38,7 @@ const History = () => {
   });
 
   const getDeposits = useMoralisQuery(
-    "DepositsA",
+    "DepositsBBB",
     query =>
       query
         .limit(25),
@@ -46,7 +46,7 @@ const History = () => {
     { autoFetch: true },
   );
   const getPayments = useMoralisQuery(
-    "PaymentsD",
+    "PaymentsBBB",
     query =>
       query
         .limit(25),
@@ -134,10 +134,10 @@ const History = () => {
         if (erc20Transfer.to_address.toUpperCase() == contractAddress.toUpperCase() ){
           return(
           <tr key={index2}>
-            <td>erc20 Deposit</td>
-            <td>some person</td>
+            <td style={{display:'flex',marginLeft:'23%'}}>erc20 Deposit</td>
+            <td >some person</td>
             <td>{getEllipsisTxt(erc20Transfer.address, 4)}</td>
-            <td style={{color:'#00ffff'}}>{Moralis.Units.FromWei(erc20Transfer.value)}</td>
+            <td style={{display:'flex', color:'#00ff00'}}><span style={{marginRight:'20%'}}>+</span><span style={{position:'relative', alignContent:'right', right:'0%'}}>{Moralis.Units.FromWei(erc20Transfer.value)}</span></td>
             <td><a href={txHash} target="_blank">{getEllipsisTxt(erc20Transfer.transaction_hash, 4)}</a></td>
             <td>{timestamp.toString().substring(0,24)}</td>      
           </tr>
@@ -146,10 +146,10 @@ const History = () => {
         else if (erc20Transfer.from_address.toUpperCase() == contractAddress.toUpperCase() ){
           return(
           <tr key={index2}>
-            <td>erc20 Transfer out</td>
-            <td>some person</td>
+            <td style={{display:'flex',marginLeft:'23%'}}>erc20 Transfer out</td>
+            <td>[contract owner]</td>
             <td>{getEllipsisTxt(erc20Transfer.address, 4)}</td>
-            <td>{Moralis.Units.FromWei(erc20Transfer.value)}</td>
+            <td style={{display:'flex', color:'#ff0000', }}><span style={{marginRight:'23%'}}>-</span><span style={{position:'relative', alignContent:'right', right:'0%'}}>{Moralis.Units.FromWei(erc20Transfer.value)}</span></td>
             <td><a href={txHash} target="_blank">{getEllipsisTxt(erc20Transfer.transaction_hash, 4)}</a></td>
             <td>{timestamp.toString().substring(0,24)}</td>      
           </tr>
@@ -164,10 +164,10 @@ const History = () => {
             let timestamp = new Date(item.attributes.block_timestamp);
             return(
             <tr>
-              <td >{deriveAction(item.attributes.didSucceed)}</td>
+              <td style={{display:'flex',marginLeft:'23%'}}>{deriveAction(item.attributes.didSucceed)}</td>
               <td >[contract owner]</td>
               <td>devETH</td>
-              <td style={{color:'#cc0000'}}> {Moralis.Units.FromWei(item.attributes.paymentAmount)} </td>
+              <td style={{display:'flex', color:'#cc0000', }}><span style={{marginRight:'23%'}}>-</span><span style={{position:'relative', alignContent:'right', right:'0%'}}>{Moralis.Units.FromWei(item.attributes.paymentAmount)}</span></td>
               <td><a href={txHash} target="_blank">{getEllipsisTxt(item.attributes.transaction_hash, 4)}</a></td>
               <td>{timestamp.toString().substring(0,24)}</td>
             </tr>)   

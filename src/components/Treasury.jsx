@@ -81,7 +81,8 @@ const Styles = {
     color:'#ccc',
     borderRadius:'20px',
     border: '1px solid rgba(50,50,50,1)',
- 
+    paddingLeft:'10px',
+    paddingRight:'10px',
     cursor: 'pointer',
     fontStyle:'italic',
     fontSize:'11px',
@@ -269,15 +270,20 @@ function submitDepositFunc(){
     <div style={{}}>
 {/* selectedAssetObj */}
 
-      <div style={{display:'flex',display:displayUserSelectAssetsDiv, width:'33%', top:'25%', left:'10%', backgroundColor:'rgba(15,15,15,0.4)', border:'1px solid rgba(1,1,1,0.4)', height:'400px', position:'absolute', borderRadius:'20px' }}>
-      <div style={{position:'absolute', left:'37%', top:'8%', fontSize:'35px'}}>DEPOSIT</div>
+      <div style={{position:'absolute', left:'21%', top:'8%', fontSize:'35px'}}>MY ASSETS</div>
+      <div style={{display:'flex',display:displayUserSelectAssetsDiv, width:'33%', top:'15%', left:'10%', backgroundColor:'rgba(15,15,15,0.4)', border:'1px solid rgba(1,1,1,0.4)', height:'400px', position:'absolute', borderRadius:'20px' }}>
+      
+      <div style={{position:'absolute', left:'40%', top:'8%', fontSize:'25px'}}>DEPOSIT</div>
         {selectedAssetObjIsSelected ? 
           <>
           <div className='selectedAssetDiv' onClick={()=>{showSelectAssetDiv()}} style={Styles.selectedTokenDiv}>
-            {selectedAssetObj.symbol} ↓
+            <div style={{color:'#ADAC93',marginLeft:'-10%'}}>{selectedAssetObj.symbol} </div> <div style={{position:'absolute', top:'0%',right:'5%'}}>↓</div>
           </div>
            <div  style={Styles.maxQtyStyle}>
-              <div onClick={()=>{ setDepositQty(depositQtyMax)}} className="maxDivButton" style={Styles.maxQtyStyleTxt}>MAX: </div>{depositQtyMax}
+              <div onClick={()=>{ setDepositQty(depositQtyMax)}} className="maxDivButton" style={Styles.maxQtyStyleTxt}>MAX: </div>
+              <div style={{position:'absolute', top:'0%', right:'-175%'}}>
+                {depositQtyMax}
+              </div>
           </div>
           </>:
           <div className="selectAssetButton" onClick={()=>{showSelectAssetDiv() }}  style={{zIndex:'55', height:"8%", width:'30%',  backgroundColor:'rgba(0,130,255,0.5',  paddingTop:"2%", position:'absolute', top:'40%', right:'5%',  borderRadius:'25px'}}>
@@ -291,7 +297,7 @@ function submitDepositFunc(){
         if (!/[0-9,\.]/.test(event.key)) {
           event.preventDefault();
         }
-      }} type="text" value={depositQty} onChange={(e) => setDepositQty(e.target.value)} placeholder="0.0" style={{ border:'none',fontSize:'35px', color: '#fff', backgroundColor:'rgba(15,15,15,0.4)', height:'25px', width:'60%', marginLeft:'-40%', padding:'5px',}} />
+      }} type="text" value={depositQty} onChange={(e) => {if (e.target.value){setDepositQty(e.target.value)}else{setDepositQty(0)} }} placeholder="0.0" style={{ border:'none',fontSize:'35px', color: '#fff', backgroundColor:'rgba(15,15,15,0.4)', height:'25px', width:'60%', marginLeft:'-40%', padding:'5px',}} />
             </label>
           </form>
         </div>
@@ -302,7 +308,7 @@ function submitDepositFunc(){
       <div style={{display:displayUserAssetsDiv}}>
       <div onClick={()=>{resetSelectAssetDiv() }} className="xButton" style={{position:'absolute', left:'7%', top:'13%', fontSize:'40px', userSelect:'none', }}>ⓧ </div>
 
-        <div style={{position:'absolute', left:'20%', top:'8%', fontSize:'35px'}}>MY ASSETS</div>
+        
         <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
         
         <table style={Styles.table}>

@@ -96,7 +96,7 @@ function App() {
   
       <div className="content" style={Styles.content} >
         <Routes>
-            <Route exact path="/" element={<Proposals/>} />
+            <Route exact path="/" element={<Treasury/>} />
 
             <Route path='/Proposals'  element={<Proposals/>}/>
             <Route path='/Custodians' element={<Custodians/>} />
