@@ -23,10 +23,11 @@ const Styles = {
 
 
 const Admin = () => {
-    const {Moralis} = useMoralis();
+    const {Moralis, web3, enableWeb3, isWeb3Enabled, isWeb3EnableLoading, web3EnableError} = useMoralis();
     const {account} = useChain();
     const [stateId, setStateId] = useState(0); //hard coded ID for admin sendToken function run
-
+    
+    const [voteThreshold, setVoteThreshold] = useState(-1);
 
     const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction({ 
         chain:'mumbai',
@@ -46,8 +47,30 @@ const Admin = () => {
         contractAddress: contractAddress,
         functionName: "getCustodians",
     }); 
+    const GetVoteThreshold = useWeb3ExecuteFunction({ 
+        chain:'mumbai',
+        abi: contractABI,
+        contractAddress: contractAddress,
+        functionName: "getVoteThreshold",
+    }); 
+
 
  
+    useEffect(()=>{
+        if (!isWeb3Enabled){
+            GetVoteThreshold.fetch();
+        }
+    },[isWeb3Enabled]);
+
+    useEffect(()=>{
+        console.log('fetching vote threshold..');
+        setTimeout(function(){GetVoteThreshold.fetch();},500);
+    },[]);
+
+    useEffect(()=>{
+        setVoteThreshold (GetVoteThreshold.data);
+    },[GetVoteThreshold.data]);
+
     useEffect(()=>{
 
     },[CustodiansFromContract]);
@@ -68,36 +91,7 @@ function initializeContract(){
 
     const [hasContractBeenRun, setHasContractBeenRun] = useState(false);
     
-    function initializeReturner(){
-        if (hasContractBeenRun){
-            return(
-                <>
-                    <span style={{color:'#00ff00'}}>initialized</span><br></br>
-                    <span style={{display:"flex", alignContent:'left'}}>
-                        
-                        Vote "pass" threshold <span style={{color:'#00ff00'}}>&nbsp; &nbsp; 2 / 4</span>
-                    </span>
-                </>
-            )
-        }else {
-            return(
-            <>
-                <span style={{color:'#ff0044'}}>uninitialized</span>
-                <span>
-                    <form>
-                    Vote "pass" threshold &nbsp;
-                    <select style={{backgroundColor:'#ff0044',}}>
-                        <option value="ETH"> 1</option>
-                        <option value="ETH"> 2</option>
-                        <option value="ETH"> 3</option>
-                        <option value="ETH"> 4</option>
-                    </select>
-                    </form>
-                </span>
-            </>
-            )
-        }
-    }
+
 
     if (data && !isLoading && !isFetching && CustodiansFromContract.data && !CustodiansFromContract.isLoading && !CustodiansFromContract.isFetching){
         if ( account.toUpperCase() == data.toUpperCase() ){
@@ -111,14 +105,23 @@ function initializeContract(){
                 <div style={{}}>
 <br></br>           Admin Mode: Activated<br></br>
 
+                    
                     <div style={{display:'flex', alignContent:'left', marginLeft:'10%', marginTop:'4%', }}>
-                        <button style={{}} onClick={()=>{initializeContract()}}>Initialize Contract</button>
-                        <div style={{marginLeft:'3%'}}> Contract: {initializeReturner()}</div>
+                        <table style={{width:'30%'}}>
+                            <tbody>
+                                <tr>
+                                    <td style={{}}>Contract: </td>
+                                    <td style={{}}>{hasContractBeenRun?  <span style={{color:'#00ff00'}}>initialized</span> : <><span style={{color:'#ff0044'}}>uninitialized</span> <button style={{width:'50%'}} onClick={()=>{initializeContract()}}>Initialize</button></>} </td>
+                                </tr>
+                                <tr>
+                                    <td style={{}}>Vote pass threshold: </td>
+                                    <td style={{}}>{voteThreshold? parseInt(voteThreshold._hex) : <>loading..</> } </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div>
-                    
-                
                     <table style={Styles.table}>
                         <tbody>
                             <tr>

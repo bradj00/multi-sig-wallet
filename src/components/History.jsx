@@ -88,7 +88,7 @@ const History = () => {
   function deriveAction(statusId){
     switch(statusId){
       case true:
-        return(<>native transfer out</>);
+        return(<>native Withdraw</>);
       case false:
         return(<>Denied TX</>);
     }
@@ -135,7 +135,7 @@ const History = () => {
           return(
           <tr key={index2}>
             <td style={{display:'flex',marginLeft:'23%'}}>erc20 Deposit</td>
-            <td >some person</td>
+            <td >...</td>
             <td>{getEllipsisTxt(erc20Transfer.address, 4)}</td>
             <td style={{display:'flex', color:'#00ff00'}}><span style={{marginRight:'20%'}}>+</span><span style={{position:'relative', alignContent:'right', right:'0%'}}>{Moralis.Units.FromWei(erc20Transfer.value)}</span></td>
             <td><a href={txHash} target="_blank">{getEllipsisTxt(erc20Transfer.transaction_hash, 4)}</a></td>
@@ -146,7 +146,7 @@ const History = () => {
         else if (erc20Transfer.from_address.toUpperCase() == contractAddress.toUpperCase() ){
           return(
           <tr key={index2}>
-            <td style={{display:'flex',marginLeft:'23%'}}>erc20 Transfer out</td>
+            <td style={{display:'flex',marginLeft:'23%'}}>erc20 Withdraw</td>
             <td>[contract owner]</td>
             <td>{getEllipsisTxt(erc20Transfer.address, 4)}</td>
             <td style={{display:'flex', color:'#ff0000', }}><span style={{marginRight:'23%'}}>-</span><span style={{position:'relative', alignContent:'right', right:'0%'}}>{Moralis.Units.FromWei(erc20Transfer.value)}</span></td>
