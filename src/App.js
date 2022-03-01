@@ -16,6 +16,7 @@ import Proposals from "./components/Proposals";
 import Custodians from './components/Custodians';
 import History from './components/History';
 import Deposits from './components/Depsoits';
+import User from './components/User';
 import Admin from './components/Admin';
 import Treasury from './components/Treasury';
 import AddressBook from './components/AddressBook';
@@ -102,6 +103,7 @@ function App() {
             <Route path='/Custodians' element={<Custodians/>} />
             <Route path='/History' element={<History/>} />
             <Route path='/Deposits' element={<Deposits/>} />
+            <Route path='/User' element={<User/>} />
             <Route path='/Admin' element={<Admin/>} />
             <Route path='/Treasury' element={<Treasury/>} />
             <Route path='/AddressBook' element={<AddressBook/>} />

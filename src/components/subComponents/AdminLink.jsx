@@ -32,7 +32,7 @@ const AdminLink = () => {
             console.log('match!');
             return (
                 <>
-                     <li> <Link to="/Admin">🛡️ Admin Functions</Link> </li>
+                     <Link to="/Admin">🛡️ Admin Functions</Link> 
                 </>
                 )
         }else {

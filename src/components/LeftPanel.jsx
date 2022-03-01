@@ -9,6 +9,7 @@ import Proposals from './Proposals';
 import Custodians from './Custodians';
 import History from './History';
 import '../styles/styles.css'
+
 import Admin from './Admin';
 import AdminLink from './subComponents/AdminLink';
 import Account from './Account';
@@ -37,13 +38,14 @@ const LeftPanel = () => {
           <li> <Link to="/Custodians">🔑 Custodians</Link> </li>
           <li> <Link to="/History">📖 History</Link> </li>
           <li> <Link to="/Treasury">🔐 Treasury</Link> </li>
-          <li> <Link to="/AddressBook">📧 Address Book</Link> </li>
+         
       </ul>
       </div>
       
-      <div className="menu" style={{left: '0%', position:'absolute', bottom:'15%'}}>
+      <div className="menu" style={{position:'absolute', top: '70%', left:'10%', display:'flex', textAlign:'left', }}>
         <ul>
-            <AdminLink />
+          <li> <Link to="/User">📖 User Functions</Link> </li>
+          <li><AdminLink /></li>
         </ul>
       </div>
     </div>

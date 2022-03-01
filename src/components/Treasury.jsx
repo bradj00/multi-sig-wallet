@@ -309,7 +309,7 @@ function submitDepositFunc(){
       <div onClick={()=>{resetSelectAssetDiv() }} className="xButton" style={{position:'absolute', left:'7%', top:'13%', fontSize:'40px', userSelect:'none', }}>ⓧ </div>
 
         
-        <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
+        <div style={{position:'absolute', top:'15%', left:'10%', width:'34%', height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'0px', overflow:'scroll'  }}>
         
         <table style={Styles.table}>
           <tbody>
@@ -328,6 +328,9 @@ function submitDepositFunc(){
                     <div style={Styles.tokenEstValue}>$5.00</div>
                   </div>
                 </td>  
+                <td >
+
+                </td> 
 
           </tr>
           {userErc20TokenBalance.map((item, index)=>{   
@@ -365,8 +368,8 @@ function submitDepositFunc(){
 
 
       <div>
-        <div style={{position:'absolute', right:'15%', top:'8%', fontSize:'35px'}}>TREASURY</div>
-        <div style={{position:'absolute', top:'15%', right:'2%', width:'34%',  height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'20px', overflow:'scroll'  }}>
+        <div style={{position:'absolute', right:'21%', top:'8%', fontSize:'35px'}}>TREASURY</div>
+        <div style={{position:'absolute', top:'15%', right:'9%', width:'34%',  height:'80%', border:'0px solid rgba(10,10,10, 0.2)', borderRadius:'0px', overflow:'scroll'  }}>
         
         <table  style={Styles.table}>
           <tbody >
@@ -385,6 +388,9 @@ function submitDepositFunc(){
                     <div style={Styles.tokenEstValue}>$5.00</div>
                   </div>
                 </td>  
+                <td >
+
+                </td> 
 
           </tr>
           {erc20TokenBalance.map((item, index)=>{   
