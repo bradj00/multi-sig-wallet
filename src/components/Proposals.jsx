@@ -300,8 +300,10 @@ function checkIfIdHasFailed(id){
 
   useEffect(() => {
     if(data != null){
-      console.log('\t\t\tSETTING TOTAL VOTES AT: ',data[1][0].length)
-      setTotalVotes(data[1][0].length); //set total number of votes that can be cast
+      if (data[1][0] != null){
+        console.log('\t\t\tSETTING TOTAL VOTES AT: ',data[1][0].length)
+        setTotalVotes(data[1][0].length); //set total number of votes that can be cast
+      }
     }
   },[data]);
 
@@ -623,9 +625,9 @@ function proposalStatusReturn(status){
                                    
                 {didReject? <td style={Styles.tdRed}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td> :  <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length}   </td> }                              
                 {/* <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td> */}
-                <td style={Styles.td}> {checkIfIdHasFailed(parseInt(obj[1])) ? <div style={{color:'#7100FF'}}>failed</div> : proposalStatusReturn(parseInt(obj[4]._hex,16)) }</td>
+                <td style={Styles.td}> {checkIfIdHasFailed(parseInt(obj[1])) ? <div style={{color:'#9C0000', fontWeight:'900'}}>rejected</div> : proposalStatusReturn(parseInt(obj[4]._hex,16)) }</td>
                 {/* {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: proposalId, status: proposalStatus }}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>} */}
-                <ExecuteLink proposalId={{proposalId: proposalId, status: proposalStatus }}/>
+                {checkIfIdHasFailed(parseInt(obj[1])) ? <></>  :  <ExecuteLink proposalId={{proposalId: proposalId, status: proposalStatus }}/> }
               </tr>
               )
              

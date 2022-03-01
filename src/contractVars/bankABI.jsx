@@ -1,4 +1,4 @@
-export const contractAddress = '0x5044DBE123b8C1e2f833Ef1d919cacAcd89fF918';
+export const contractAddress = '0x184df100d68AF57764bB6D29522c0c71C35D29B7';
 export const nativeToken = 'devEth';
 
 export const contractABI =[
@@ -195,19 +195,13 @@ export const contractABI =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_requestId",
-				"type": "uint256"
-			}
-		],
+		"inputs": [],
 		"name": "calculateRejectCount",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
