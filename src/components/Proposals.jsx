@@ -49,6 +49,11 @@ var Styles= {
     // borderLeft:'1px solid black',
     // borderRight:'1px solid black'
   },
+  tdRed: {
+    paddingLeft:'5px',
+    paddingRight:'5px',
+    border:'1px solid #ff0000',
+  },
   
   table2:{
     position:'absolute',
@@ -76,6 +81,10 @@ var Styles= {
 const Proposals = () => { 
 
   
+  const [voteThresholdValue, setVoteThresholdValue] = useState(-1);
+  const [failedVoteThresholdArray, setFailedVoteThresholdArray] = useState([]);
+  
+  
   const [isErc20Selected, setIsErc20Selected] = useState(false);
   const [selectedAssetContractAddress, setSelectedAssetContractAddress] = useState();
   const [selectedAssetTokenSymbol, setSelectedAssetTokenSymbol] = useState();
@@ -83,6 +92,7 @@ const Proposals = () => {
 ////////////////
 ////////////////
 
+  const [totalVotes, setTotalVotes] = useState(-1);
   const [treasuryTokenSymbols, setTreasuryTokenSymbols] = useState([]);
   const {Moralis} = useMoralis();
   const [propsalInfoDivDisplay, setPropsalInfoDivDisplay] = useState('0%');
@@ -147,6 +157,25 @@ const Proposals = () => {
   );
 
   
+///////////////////////
+///////////////////////
+  const getVoteThreshold = useWeb3ExecuteFunction({ 
+    chain:'mumbai',
+    abi: contractABI, 
+    contractAddress: contractAddress,
+    functionName: "getVoteThreshold",
+  }); 
+  const calculateRejectCount = useWeb3ExecuteFunction({ 
+    chain:'mumbai',
+    abi: contractABI,
+    contractAddress: contractAddress,
+    functionName: "calculateRejectCount",
+  }); 
+///////////////////////
+///////////////////////
+
+
+
   const getContractOwner = useWeb3ExecuteFunction({ 
     chain:'mumbai',
     abi: contractABI,
@@ -216,26 +245,64 @@ const Proposals = () => {
 },[getContractERC20BalanceMoralis.data]);  
 
   useEffect(()=>{ 
+    calculateRejectCount.fetch();
+    getVoteThreshold.fetch();
     fetch();
     getProposalInfo(-1);
     getContractOwnerFunc();
     getContractERC20BalanceMoralis.fetchERC20Balances();
   },[])
+  
+///////////
+///////////
+  useEffect(() => {
+    if (getVoteThreshold.data != null){
+      setVoteThresholdValue(getVoteThreshold.data);
+    }
+  },[getVoteThreshold.data]);
 
   useEffect(() => {
-    // if (data && data[0] && data != null){
-    //   console.log('data: ', data);
-    // for (let i = 0; i < data[0].length; i++){
-      // console.log('========');
-      // console.log(Object.keys(data[0][i]));
-      // console.log(data[0][i].receipient);
-      // console.log(parseInt(data[0][i].id._hex, 16));
-      // console.log(parseInt(data[0][i].amount._hex, 16) );
-      // console.log(data[0][i]._reason);
-      // console.log('-------');
+    if (calculateRejectCount.data != null){
+      console.log('*****setting reject count array: ', calculateRejectCount.data)
+      setFailedVoteThresholdArray(calculateRejectCount.data);
+    }
+  },[calculateRejectCount.data]);
 
-    // }
-    // }
+  useEffect(() => {
+    if (failedVoteThresholdArray != null){
+      failedVoteThresholdArray.map((failsById)=>{
+        if (failsById > (totalVotes - voteThresholdValue)){
+          
+        }
+      });
+    }
+  },[failedVoteThresholdArray]);
+///////////
+///////////
+
+
+function checkIfIdHasFailed(id){
+  if (failedVoteThresholdArray != null){
+      if (failedVoteThresholdArray[id] > (totalVotes - voteThresholdValue)){
+        console.log('id['+id+'] failure', true);
+        console.log(failedVoteThresholdArray[id], (totalVotes - voteThresholdValue))
+        return(true);
+      }else {
+        console.log('id['+id+'] failure', false);
+        console.log(failedVoteThresholdArray, (totalVotes - voteThresholdValue))
+        return(false);
+      }
+  }else{
+    console.log('failedVoteThresholdArray is not yet defined: ', failedVoteThresholdArray);
+  }
+}
+
+
+  useEffect(() => {
+    if(data != null){
+      console.log('\t\t\tSETTING TOTAL VOTES AT: ',data[1][0].length)
+      setTotalVotes(data[1][0].length); //set total number of votes that can be cast
+    }
   },[data]);
 
   const handleSubmit = (e) => {
@@ -315,34 +382,36 @@ function isMeSignatureSubmit(custodian){
   }
 }
 
-function calcVotes(id){
-  
-  //get proposalId Approval Status  
-  // console.log('ALL PROPOSAL SIGNATURES: ');
-  // console.log(data[1]);
-  let voteCountTemp = 0;
+
+
+function calcRejections(id){
+  let rejectionCountTemp  = 0;
+
   for (let i = 0; i <= data[1][id].length; i++){
     if (i == data[1][id].length){
-      // console.log('VOTE COUNT: '+voteCountTemp);
+      return (rejectionCountTemp);
+    }
+    let convertedStatus = parseInt(data[1][id][i].status);
+    if (convertedStatus == 2){
+      rejectionCountTemp++;
+    }
+  }
+
+}
+
+function calcVotes(id){
+  let voteCountTemp = 0;
+
+  for (let i = 0; i <= data[1][id].length; i++){
+    if (i == data[1][id].length){
       return (voteCountTemp);
     }
-    // console.log(Object.keys(data[1][id][i]) );
     let convertedStatus = parseInt(data[1][id][i].status);
     if (convertedStatus != 0){
       voteCountTemp++;
     }
 
   }
-  data[1][id].map((obj)=>{
-    // console.log(obj.custodianMember, parseInt(obj.proposalId._hex), parseInt(obj.status._hex) )
-    let convertedStatus = parseInt(obj.status._hex); 
-    if (convertedStatus != 0){
-      
-      // setVoteCount({...voteCount, id: (voteCount[id]+1) }) // WILL NOT WORK
-    }else{
-      // console.log('ignoring NOT SEEN vote.');
-    }
-  })
 }
 
 
@@ -496,6 +565,7 @@ function proposalStatusReturn(status){
     // console.log('GOT SOME DATA: ');
     // console.log(data);
 
+
     return(
     <div style={Styles.container}>
         
@@ -533,21 +603,27 @@ function proposalStatusReturn(status){
           } 
 
             {
-            data[0].slice(0).reverse().map((obj, index) => {  
+            data[0].slice(0).reverse().map((obj, index) => {   
               let proposalStatus = parseInt(obj[4]._hex,16)
               let proposalId = parseInt(obj[1]);
+              let didReject = calcRejections(proposalId);
+              if (didReject > 0){didReject = true}
+              
+
+
               // console.log('DATA m8: ',obj);
               return(
               <tr key={index} style={{userSelect:'none'}} onClick={()=>{getProposalInfo(parseInt(obj[1])) }  }>
                 <td style={Styles.tdId}>{ parseInt(obj[1]) }</td>               
-                <td style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
+                <td onClick={() => {navigator.clipboard.writeText(obj[0])}} title={obj[0]} style={Styles.td}>{ getEllipsisTxt(obj[0], 5) }</td>                                    
                 <td style={Styles.tdReason}>{obj[3]}</td>         
                 <td style={Styles.td}>{ Moralis.Units.FromWei(''+parseInt(obj[2]._hex)) }</td>               
-                <td style={Styles.td}>{obj.contractAddress}</td>         
+                <td style={Styles.td}>{obj.tokenSymbol}</td>         
                 {/* <td style={Styles.td}>{ parseInt(obj[2]._hex) }</td>                */}
                                    
-                <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td>                                     
-                <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td>
+                {didReject? <td style={Styles.tdRed}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length} </td> :  <td style={Styles.td}> {calcVotes(parseInt(obj[1]) )+ ' / '+ data[1][obj[1]].length}   </td> }                              
+                {/* <td style={Styles.td}> {proposalStatusReturn(parseInt(obj[4]._hex,16))} </td> */}
+                <td style={Styles.td}> {checkIfIdHasFailed(parseInt(obj[1])) ? <div style={{color:'#7100FF'}}>failed</div> : proposalStatusReturn(parseInt(obj[4]._hex,16)) }</td>
                 {/* {isAccountContractOwner ? <td><ContractOwnerSendButton proposalId={{proposalId: proposalId, status: proposalStatus }}/> </td> : <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>} */}
                 <ExecuteLink proposalId={{proposalId: proposalId, status: proposalStatus }}/>
               </tr>

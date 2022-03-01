@@ -104,7 +104,7 @@ const History = () => {
         <table style={Styles.table}>
           <tbody>
           <tr>
-            <th style={Styles.th}>Action </th>
+            <th style={Styles.th}>Action </th> 
             <th style={Styles.th}>Initiator </th>
             <th style={Styles.th}>Token </th>
             <th style={Styles.th}>Amount </th>

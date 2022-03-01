@@ -1,5 +1,4 @@
-export const contractAddress = '0xfD229Df2579010D285559b14d6D5B28f4acD0D03';
-// export const contractAddress = '0xf3fBdD65C620c9a3Ad6d7557A402503945FD1797';
+export const contractAddress = '0x5044DBE123b8C1e2f833Ef1d919cacAcd89fF918';
 export const nativeToken = 'devEth';
 
 export const contractABI =[
@@ -188,7 +187,45 @@ export const contractABI =[
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "totalApproval",
+				"name": "_totalApproval",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_requestId",
+				"type": "uint256"
+			}
+		],
+		"name": "calculateRejectCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_requestId",
+				"type": "uint256"
+			}
+		],
+		"name": "calculateVotedCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_totalVoted",
 				"type": "uint256"
 			}
 		],
@@ -369,6 +406,19 @@ export const contractABI =[
 				"internalType": "struct MultiSig.Custodian[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getVoteThreshold",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",

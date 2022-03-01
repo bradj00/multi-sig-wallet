@@ -11,7 +11,7 @@ contract MultiSig {
         0xF9108C5B2B8Ca420326cBdC91D27c075ea60B749,
         0x7ab8a8dC4A602fAe3342697a762be22BB2e46d4d,
         0x813426c035f2658E50bFAEeBf3AAab073D956F31,
-        0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1,
+        0x9A3A8Db1c09cE2771A5e170a01a2A3eFB93ADA17,
         0x89Ca0E3c4b93D9Ee8b1C1ab89266F1f6bA11Aa22
     ];
     event Deposit(address indexed fromThisGuy, uint valueGuy);
@@ -21,7 +21,7 @@ contract MultiSig {
 
 
     bool contractHasLaunched = false;
-    uint voteApprovalThreshold = 1;
+    uint voteApprovalThreshold = 3;
     uint256 contractBalance = address(this).balance;
 
     modifier onlyCustodians(){
@@ -76,6 +76,8 @@ contract MultiSig {
         }
     }
 
+
+
     struct Requests {
         address payable receipient;
         uint id;
@@ -108,19 +110,66 @@ contract MultiSig {
         return(custodianApprovals);
     }
 
-    function calculateApprovalCount(uint _requestId) public view returns(uint totalApproval) {
+    function getVoteThreshold() public view returns(uint){
+        return voteApprovalThreshold;
+    }
+
+    // function calculateRejectCount(uint _requestId) public view returns(uint) {
+    //     ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
+    //     uint _totalRejected = 0;
+    //     for (uint i=0; i < approvers.length; i++) {
+    //         ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
+    //         custodianApprovals[i] = newCustodianApprovals;
+    //         if (approvedStatus[ _requestId ][ approvers[i] ] == 2){
+    //             _totalRejected = _totalRejected+1;
+    //         }
+    //     }
+    //     return(_totalRejected);
+    // }
+    function calculateRejectCount() public view returns(uint [] memory) {
         ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
-        uint totalApproval1 = 0;
+        uint[] memory _totalRejected; 
+        for (uint q=0; q < transferRequests.length; q++){
+            for (uint i=0; i < approvers.length; i++) {
+                ApprovalStruct memory newCustodianApprovals = ApprovalStruct(q, approvers[i], approvedStatus[q ][ approvers[i] ]);
+                custodianApprovals[i] = newCustodianApprovals;
+                if (approvedStatus[ q ][ approvers[i] ] == 2){
+                    _totalRejected[q] = _totalRejected[q]+1;
+                }
+            }
+
+        }
+        return(_totalRejected);
+    }
+    function calculateVotedCount(uint _requestId) public view returns(uint _totalVoted) {
+        ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
+        uint totalVoted = 0;
 
         for (uint i=0; i < approvers.length; i++) {
             ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
             custodianApprovals[i] = newCustodianApprovals;
             if (approvedStatus[ _requestId ][ approvers[i] ] != 0){
-                totalApproval1 = totalApproval1+1;
+                totalVoted = totalVoted+1;
             }
         }
-        return(totalApproval1);
+        return(totalVoted);
     }
+    function calculateApprovalCount(uint _requestId) public view returns(uint _totalApproval) {
+        ApprovalStruct [] memory custodianApprovals = new ApprovalStruct[](approvers.length);
+        uint totalApproval1 = 0;
+
+
+        for (uint i=0; i < approvers.length; i++) {
+            ApprovalStruct memory newCustodianApprovals = ApprovalStruct(_requestId, approvers[i], approvedStatus[ _requestId ][ approvers[i] ]);
+            custodianApprovals[i] = newCustodianApprovals;
+
+            if (approvedStatus[ _requestId ][ approvers[i] ] == 1){
+                totalApproval1 = totalApproval1 + 1;
+            }
+        }
+        return(totalApproval1 );
+    }
+
 
     // function getIdToTokenSymbol(uint id) public view returns(string memory tokenSymbol){
     //     return(transferRequests[id].tokenSymbol);
@@ -129,12 +178,15 @@ contract MultiSig {
     function sendTokens(uint id) onlyContractOwner public {
         require(msg.sender == contractOwner, "Only owner can call this");
         
-        uint tallyVotes = calculateApprovalCount(id);
-        require(tallyVotes >= voteApprovalThreshold, "not enough votes to take action.");
+        uint tallyVotes     = calculateApprovalCount(id);
+        uint tallyApprovals = calculateVotedCount(id);
+
+        require(tallyApprovals >= voteApprovalThreshold, "not enough approvals to take action.");
         require(transferRequests[id].status != 2, "proposal has already been executed.");
-       
+        require((tallyVotes <= tallyApprovals) && (tallyVotes >= voteApprovalThreshold), "proposal has failed to meet threshold");
+
         if (transferRequests[id].contractAddress == 0x0000000000000000000000000000000000000000  ) {
-            transferRequests[id].receipient.transfer(transferRequests[id].amount); //only works for native coin (ETH/MATIC not erc20..yet)
+            transferRequests[id].receipient.transfer(transferRequests[id].amount); //native coin (ETH/MATIC)
             transferRequests[id].status = 2;
             emit Payment(id, true, transferRequests[id].amount);
         }else {
