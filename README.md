@@ -5,7 +5,7 @@ A multi-sig Ethereum wallet built from the ground up using Moralis + Web3 + Reac
 
 You will need a browser web3 wallet such as Metamask to interact with the dApp. 
 
-
+Live demo can be viewed at: https://multi-sig-dev.herokuapp.com/
 
 #### SETUP
 * from the root directory run `yarn install` then `yarn start` to launch the localhost UI. If you wanted to generate production files simply run `yarn build`
