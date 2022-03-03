@@ -21,6 +21,7 @@ import Admin from './components/Admin';
 import Treasury from './components/Treasury';
 import AddressBook from './components/AddressBook';
 import BackdropFilter from "react-backdrop-filter";
+import Budgetary from './components/Budgetary';
 
 
 const Styles={
@@ -106,6 +107,7 @@ function App() {
             <Route path='/User' element={<User/>} />
             <Route path='/Admin' element={<Admin/>} />
             <Route path='/Treasury' element={<Treasury/>} />
+            <Route path='/Budgetary' element={<Budgetary />} />
             <Route path='/AddressBook' element={<AddressBook/>} />
         </Routes>
       </div>

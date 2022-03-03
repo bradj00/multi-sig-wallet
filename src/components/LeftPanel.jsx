@@ -38,13 +38,14 @@ const LeftPanel = () => {
           <li> <Link to="/Custodians">🔑 Custodians</Link> </li>
           <li> <Link to="/History">📖 History</Link> </li>
           <li> <Link to="/Treasury">🔐 Treasury</Link> </li>
+          <li> <Link to="/Budgetary">💰 Budgetary</Link> </li>
          
       </ul>
       </div>
       
       <div className="menu" style={{position:'absolute', top: '70%', left:'10%', display:'flex', textAlign:'left', }}>
         <ul>
-          <li> <Link to="/User">📖 User Functions</Link> </li>
+          <li> <Link to="/User">👨‍🚀 User Functions</Link> </li>
           <li><AdminLink /></li>
         </ul>
       </div>
