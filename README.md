@@ -1,4 +1,7 @@
 # Homebrew Multi-Sig Ethereum Wallet
+
+![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Proposals.png?raw=true)
+![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Treasury.png?raw=true)
 Set a number of wallets to control the treasury of a contract. This will hold any native token (ETH/MATIC) plus ERC-20 compatible tokens and allow a committee to vote on proposed transfers of treasury funds. 
 
 A multi-sig Ethereum wallet built from the ground up using Moralis + Web3 + React.
