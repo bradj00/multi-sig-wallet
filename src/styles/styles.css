@@ -79,6 +79,17 @@ ul {
  .maxDivButton:hover{
   background: rgba(150,150,150,0.7);
  }
+
+ .addNewEntry {
+   background: rgba(50,50,50,0.7);
+   cursor: pointer;
+   user-select:none;
+  }
+ .addNewEntry:hover{
+   background: rgba(150,150,150,0.7);
+   user-select:none;
+  }
+
   /* tr:nth-child(even) {background: #555}
   tr:nth-child(odd) {background: #333} */
 

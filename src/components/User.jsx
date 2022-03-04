@@ -15,6 +15,15 @@ const Styles = {
   td: {
     color:'#999'
   },
+  addNewEntry:{
+    border:'1px solid rgba(150,150,150,0.7)',
+    width:'3%',
+    height:'5%',
+    fontSize:'35px',
+    paddingBottom: '10px',
+    position:'absolute',
+    top:'10%',
+  },
 
 }
 
@@ -26,6 +35,9 @@ const User = () => {
       </div>
       
       <div>
+      <div className="addNewEntry" style={Styles.addNewEntry}>
+        +
+      </div>
       <table style={Styles.table}>
       
           <tbody>

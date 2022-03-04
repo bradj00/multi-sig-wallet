@@ -7,10 +7,11 @@ const Account = () => {
     
     const { authenticate, logout, isAuthenticated, user } = useMoralis();
     const [address, setAddress] = useState();
+    // const [address, setAddress] = useState();
 
 
 
-    useEffect(() => {
+    useEffect(() => { 
         if (isAuthenticated) {
           setAddress(user.attributes.ethAddress);
         }

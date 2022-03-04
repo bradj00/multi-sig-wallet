@@ -227,6 +227,7 @@ contract MultiSig {
 
     function getContractBalance() public view returns(uint){
         // return contractBalance;
+        // // return address(this).balance;
         return address(this).balance;
     }
 
