@@ -2,14 +2,15 @@
 
 A multi-signature Ethereum wallet built from the ground up using Web3 + ReactJS + Moralis. 
 
-![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Proposals.png?raw=true)
-![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Treasury.png?raw=true)
-
 Set a number of wallets to control the treasury of a contract. This will hold any native token (ETH/MATIC) plus ERC-20 compatible tokens and allow a committee to vote on proposed transfers of treasury funds. 
 
 You will need a browser web3 wallet such as Metamask to interact with the dApp. 
 
 Live demo on the Mumbai Polygon testnet can be viewed at: https://multi-sig-dev.herokuapp.com/
+
+![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Proposals.png?raw=true)
+![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Treasury.png?raw=true)
+
 
 #### SETUP
 * from the root directory run `yarn install` then `yarn start` to launch the localhost UI. If you wanted to generate production files simply run `yarn build`
@@ -29,6 +30,7 @@ Before initialization from the `Admin Functions` page make the following adjustm
 * In `./contractVars/bankABI.jsx` update `contractAddress` with contract address and generated ABI. The default `contractABI` should work fine otherwise.
 
 #### MORALIS
+(section update)
 * Moralis is used for most of the live data updating in the UI as well as contract event monitoring and other integrations. 
 * Update `appId` and `serverUrl` in `./index.js` with your Moralis server information and add the below Contract Sync events to configure Moralis to sync these contract events:
 
