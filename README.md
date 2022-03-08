@@ -6,7 +6,7 @@ Set a number of wallets to control the treasury of a contract. This will hold an
 
 You will need a browser web3 wallet such as Metamask to interact with the dApp. 
 
-Set your MetaMask to the Mumbai Testnet and a live demo can be viewed at: https://multi-sig-dev.herokuapp.com/
+Set your MetaMask to the Polygon Mumbai Testnet and a live demo can be viewed at: https://multi-sig-dev.herokuapp.com/
 
 ![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Proposals.png?raw=true)
 ![alt text](https://github.com/bradj00/multi-sig-wallet/blob/master/public/screenshots/Treasury.png?raw=true)
