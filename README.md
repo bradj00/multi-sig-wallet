@@ -1,6 +1,6 @@
 # Homebrew Multi-Sig Ethereum Wallet
 
-A multi-signature Ethereum wallet built from the ground up using Web3 + ReactJS + Moralis. 
+A multi-signature Ethereum-compatible wallet built from the ground up using Web3 + ReactJS + Moralis. 
 
 Set a number of wallets to control the treasury of a contract. This will hold any native token (ETH/MATIC) plus ERC-20 compatible tokens and allow a committee to vote on proposed transfers of treasury funds. 
 
